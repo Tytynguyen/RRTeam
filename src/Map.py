@@ -4,6 +4,7 @@
 
 import numpy as np
 from planarutils import *
+from utilities import *
 
 class Node:
     def __init__(self, x, y, neighbors):
@@ -24,15 +25,7 @@ class Node:
         # TODO: Problem if distance is less than 1! Fix
         return 1/self.Dist(other)
 
-class Segment:
-    def __init__(self, Node1, Node2):
-        # TODO add option to use a provided probability to initialize instead of calculating probability between the nodes
-        # Save the state matching this segment between nodes
-        self.seg = ((Node1.x, Node1.y), (Node2.x, Node2.y))
-        self.prob  = Node1.ProbWall(Node2)
 
-    def SetProb(self, prob):
-        self.prob = prob
 
 # TODO: class Map
 
