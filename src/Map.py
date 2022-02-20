@@ -7,13 +7,10 @@ from planarutils import *
 from utilities import *
 
 class Node:
-    def __init__(self, x, y, neighbors):
+    def __init__(self, x, y):
         # Save the state matching this node.
         self.x = x
         self.y = y
-
-        # TODO: Figure out what to store here
-        self.neighbors = neighbors  # {Segment, Segment, Segment...}
 
     # Report distance to another node (Euclidean)
     def Dist(self, other):
@@ -31,8 +28,15 @@ class Node:
 
 def TestVisualization():
     # Gimme some test segments to visualize.
-    segments = () # TODO fill these out and decide how big space will be
-
+    nodes = (Node(2, 5), Node(4, 2), Node(8, 12))
+    segments = (Segment(nodes[0], nodes[1], 0.46),
+                Segment(nodes[1], nodes[2], 0.98),
+                Segment(nodes[0], nodes[2], 0.20))
+    visual = Visualization((10, 15))
+    visual.ShowSegments(segments)
+    visual.ShowFigure()
+    input("Test displayed.")
+        
 def main():
     TestVisualization()
 

@@ -5,7 +5,7 @@
 #   A Visualization class to help show how the robot is mapping, and a Segment
 #   class to help store information about segments between nodes.
 #   
-#   visual = Visualization(segments)
+#   visual = Visualization(maxPt, minPt)
 #
 #  The variables are:
 #
@@ -21,10 +21,10 @@ import numpy as np
 class Visualization():
     def __init__(self, maxPt, minPt = (0, 0)):
         # Clear and show.
-        self.ClearFigure()
-        self.ShowFigure()
         self.min      = minPt
         self.max      = maxPt
+        self.ClearFigure()
+        self.ShowFigure()
 
     def ClearFigure(self):
         # Clear the current, or create a new figure.
@@ -46,7 +46,7 @@ class Visualization():
 
         # Show the segments, with opacity determined by probability.
         # Do not display segments with probabilities below the cutoff.
-        for segment in segment:
+        for segment in segments:
             plt.plot([segment.seg[0][0], segment.seg[1][0]],
                      [segment.seg[0][1], segment.seg[1][1]], 
                      'k', linewidth=2, 
