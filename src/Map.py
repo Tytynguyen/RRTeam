@@ -6,33 +6,34 @@ import numpy as np
 from planarutils import *
 from utilities import *
 
-class Node:
-    def __init__(self, x, y):
-        # Save the state matching this node.
-        self.x = x
-        self.y = y
-
-    # Report distance to another node (Euclidean)
-    def Dist(self, other):
-        return np.sqrt((other.x - self.x)**2 + (other.y - self.y)**2)
-
-    # TODO: Report probability between 0-1 of a wall existing between two nodes
-    def ProbWall(self, other):
-        # Perhaps use Dist() as a metric? Low distance between two nodes -> high probability of wall
-        # TODO: Problem if distance is less than 1! Fix
-        return 1/self.Dist(other)
 
 
 
 # TODO: class Map
 
 def TestVisualization():
+    # Generate example world with walls
+    walls = (((2,  4), (5,  9)),
+             ((5,  9), (4,  4)),
+             ((4,  4), (2,  4)),
+             ((2, 12), (9, 12)),
+             ((2, 14), (9, 12)),
+             ((2, 12), (2, 14)))
+
+    start = (1, 1)
+    goal  = (9, 14)
+    
     # Gimme some test segments to visualize.
-    nodes = (Node(2, 5), Node(4, 2), Node(8, 12))
+    nodes = (Node(2, 4), Node(4, 4), Node(8, 12), Node(5, 9))
     segments = (Segment(nodes[0], nodes[1], 0.46),
-                Segment(nodes[1], nodes[2], 0.98),
-                Segment(nodes[0], nodes[2], 0.20))
+                Segment(nodes[1], nodes[2], 0.63),
+                Segment(nodes[0], nodes[2], 0.20),
+                Segment(nodes[3], nodes[2], 0.83),
+                Segment(nodes[1], nodes[3], 1))
     visual = Visualization((10, 15))
+    visual.ShowWorld(walls, start, goal)
+    visual.ShowBot(start, 0)
+    visual.ShowNodes(nodes)
     visual.ShowSegments(segments)
     visual.ShowFigure()
     input("Test displayed.")
