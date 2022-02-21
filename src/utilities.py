@@ -5,7 +5,7 @@
 #   A Visualization class to help show how the robot is mapping, a Segment
 #   class to help store information about segments between nodes, and a Node
 #   class to encode points that have been seen.
-#   
+#
 #   visual = Visualization(maxPt, minPt)
 #
 #  The variables are:
@@ -45,8 +45,8 @@ class Visualization():
         # Do not display segments with probabilities below the cutoff.
         for segment in segments:
             plt.plot([segment.seg[0][0], segment.seg[1][0]],
-                     [segment.seg[0][1], segment.seg[1][1]], 
-                     'k', linewidth=2, 
+                     [segment.seg[0][1], segment.seg[1][1]],
+                     'k', linewidth=2,
                      alpha = segment.prob * (segment.prob > cutoff))
 
     # Takes the list of existing walls (in (point, point) form) and displays them.
@@ -54,7 +54,7 @@ class Visualization():
     def ShowWorld(self, walls, start, goal):
         for wall in walls:
             plt.plot([wall[0][0], wall[1][0]],
-                     [wall[0][1], wall[1][1]], 
+                     [wall[0][1], wall[1][1]],
                      'r', linewidth=3)
         plt.plot(start[0], start[1], 'rx', markersize = 5)
         plt.plot( goal[0],  goal[1], 'gx', markersize = 5)
@@ -72,6 +72,7 @@ class Visualization():
         # Show the plot.
         plt.pause(0.001)
 
+# TODO: may not be necessary
 class Node:
     def __init__(self, x, y):
         # Save the state matching this node.
