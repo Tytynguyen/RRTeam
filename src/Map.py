@@ -137,8 +137,8 @@ class Robot():
         closestWallSegPos = -1
         # check each wall for a collision
         for wall in self.walls:
-            # TODO: implement SegmentNearSegmentInterior
-            (i1, i2, segPos) = SegmentNearSegmentInterior(wall, path, ROBOT_WIDTH / 2)
+            # TODO: implement SegmentCrossRectangle
+            (i1, i2, segPos) = SegmentCrossRectangle(wall, path, ROBOT_WIDTH / 2)
             if (i1 == -1):
                 # no collision
                 continue

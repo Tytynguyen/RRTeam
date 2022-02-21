@@ -100,6 +100,121 @@ def SegmentCrossSegment(sA, sB):
     else:
         return ((rXu < 0) and (rXu > uXv) and (rXv < 0) and (rXv > uXv))
 
+
+#
+#   Segment Crossing Segment
+# Ref: https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+#
+def WhereSegmentCrossSegment(sA, sB):
+    # precompute parameters
+    p = sA[0]
+    r = (sA[1][0] - sA[0][0], sA[1][1] - sA[0][1])
+
+    q = sB[0]
+    s = (sB[1][0] - sB[0][0], sB[1][1] - sB[0][1])
+
+    ## Compute intersection cases
+    # (q - p) x r
+    num = (q[0] - p[0], q[1] - p[1])
+    num = num[0]*r[1] - num[1]*r[0]
+    # (r x s)
+    denom = r[0]*s[1] - r[1]*s[0]
+
+    ## Cases
+    if (num == 0 and denom == 0):
+        # two lines are colinear
+        t0 = (q[0] - p[0])*r[0] + (q[1] - p[1])*r[1]
+        t0 /= r[0]**2 + r[1]**2
+
+        t1 = t0 + (s[0]*r[0] + s[1]*r[1]) / (r[0]**2 + r[1]**2)
+
+        # check if [t0, t1] intersects [0, 1]
+        if (t0 < 0 and t1 < 0):
+            # no intersection
+            return -1
+        elif (t0 > 1 and t1 > 1):
+            # no intersection
+            return -1
+
+        # there is an intersection, return the two endpoints
+        if (t0 < 0):
+            int1 = p
+            int2 = (p[0] + t1*r[0], p[1] + t1*r[1])
+            return (int1, int2)
+        elif (t0 > 1):
+            int1 = (p[0] + t1*r[0], p[1] + t1*r[1])
+            int2 = (p[0] + r[0], p[1] + r[1])
+            return (int1, int2)
+        elif (t1 < 0):
+            int1 = p
+            int2 = (p[0] + t0*r[0], p[1] + t0*r[1])
+            return (int1, int2)
+        elif (t1 > 1):
+            int1 = (p[0] + t0*r[0], p[1] + t0*r[1])
+            int2 = (p[0] + r[0], p[1] + r[1])
+            return (int1, int2)
+        else:
+            # both t0 and t1 are in interval
+            int1 = (p[0] + t0*r[0], p[1] + t0*r[1])
+            int2 = (p[0] + t1*r[0], p[1] + t1*r[1])
+            return (int1, int2)
+
+    if (denom == 0 and num != 0):
+        # no intersection
+        return -1
+
+    # now we can safely calculate u
+    u = num / denom
+    if (denom != 0 and u >= 0 and u <= 1):
+        int = (q[0] + u*s[0], q[1] + u*s[1])
+        return (int, -1)
+
+    # if we made it here, the two line segments are not parallel and they do not intersect
+    return -1
+
+
+#
+#   Proximity of Segment to Rectangle
+#
+def SegmentCrossRectangle(s, centerseg, width):
+    # TODO: compute segments from centerline
+
+    # check intersection with segments first
+    iA = WhereSegmentCrossSegment(s, srA)
+    iB = WhereSegmentCrossSegment(s, srB)
+    iC = WhereSegmentCrossSegment(s, srC)
+    iD = WhereSegmentCrossSegment(s, srD)
+    ints = [iA, iB, iC, iD]
+
+    # a line cannot intersect more than two rectangle edges
+    pt1 = -1
+    pt2 = -1
+    for i in ints:
+        if (i == -1):
+            # not an intersection
+            # need to check endpoints in rectangle
+            continue
+        elif (i[1] == -1):
+            # just intersects at one point
+            if (pt1 == -1):
+                pt1 = i[0]
+                # may need to check other endpoint later
+            else:
+                pt2 = i[0]
+            continue
+        else:
+            # parallel to one of the lines! Not ideal...
+            # for now, just return line endpoints (TODO: fix)
+            pt1 = i[0]
+            pt2 = i[1]
+
+    # TODO: if pt1 or pt2 not filled, check if line has endpoints inside rectangle
+
+
+    # TODO: compute distance along centerline to wall (if relevant)
+
+    return (pt1, pt2)
+
 #
 #   Proximity of Segment to Segment
 #
