@@ -33,6 +33,17 @@
 #
 import numpy as np
 
+######################################################################
+#
+#   TURNING STUFF
+#
+#  Angle between two postions
+#
+def getAngle(p1, p2):
+    return np.atan2(p2[1] - p1[1], p2[0] - p1[0])
+
+def getDist(p1, p2):
+    return np.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
 
 ######################################################################
 #
@@ -131,7 +142,7 @@ def SegmentNearSegment(d, sA, sB):
 
     # Then check the endpoints to segment interiors.  This also
     # reports whether the endpoints are on opposites sides of the
-    # segement.  
+    # segement.
     cross1, near = EndpointsNearSegmentInterior(d, sA, sB)
     if near:
         return True
@@ -159,7 +170,7 @@ def PointInTriangle(p, t):
     aXb = apx * bpy - apy * bpx
     bXc = bpx * cpy - bpy * cpx
     cXa = cpx * apy - cpy * apx
-    
+
     # Determine whether the triangle is given CW (axb + bxc + cxa > 0) or CCW.
     if (aXb + bXc + cXa > 0):
         return (aXb >= 0) and (bXc >= 0) and (cXa >= 0)
@@ -269,7 +280,7 @@ def SegmentCrossArc(s, a):
     # Determine the two possible crossings.
     n1 = (-b+root)/a
     n2 = (-b-root)/a
-    
+
     # Check the two possible crossings fall in valid regions.
     g = xab*(ymr+yrb) - yab*(xmr+xrb)
     h = xab*dy        - yab*dx
