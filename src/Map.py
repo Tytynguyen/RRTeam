@@ -30,16 +30,16 @@ class Map():
         self.nodes = [] # list of nodes
 
         # add each wall as a segment
-        segments.append(Segment(Node(xrange[0], yrange[0]),
+        self.segments.append(Segment(Node(xrange[0], yrange[0]),
                                 Node(xrange[1], yrange[0]), 1)) # lower wall
 
-        segments.append(Segment(Node(xrange[1], yrange[0]),
+        self.segments.append(Segment(Node(xrange[1], yrange[0]),
                                 Node(xrange[1], yrange[1]), 1)) # right wall
 
-        segments.append(Segment(Node(xrange[1], yrange[1]),
+        self.segments.append(Segment(Node(xrange[1], yrange[1]),
                                 Node(xrange[0], yrange[1]), 1)) # top wall
 
-        segments.append(Segment(Node(xrange[1], yrange[1]),
+        self.segments.append(Segment(Node(xrange[1], yrange[1]),
                                 Node(xrange[0], yrange[1]), 1)) # left wall
 
     ''' addSegment()
@@ -49,12 +49,23 @@ class Map():
     prob: probability that segment is truly a wall
     '''
     def addSegment(self, Node1, Node2, prob):
-        segments.append(Segment(Node1, Node2, prop))
+        self.segments.append(Segment(Node1, Node2, prop))
         # TODO: do some checking here to see if we can elide our segment with another
         # i.e. check if this segment is "near" any other segments
         # for each nearby segment, check colinearity
         # if within a specific threshold, combine the segments
         # be careful not to close doorway gaps (@Tyler)
+
+    def localPlanner(self, node1, node2):
+        moveSegment = Segment(node1, node2)
+
+        for segment in self.segments:
+            # If plan crosses a wall -> FAIL
+            if SegmentCrossSegment(moveSegment, segment):
+                return False
+
+        return True
+
 
 
 '''
