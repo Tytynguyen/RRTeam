@@ -16,7 +16,6 @@ ROBOT_WIDTH = 0.5
 Master class for mapping.
 Stores:
 - List of Segments identified as walls (map.segments)
-- List of Nodes (TODO: may not be necessary) (map.nodes)
 '''
 class Map():
     ''' init()
@@ -27,20 +26,21 @@ class Map():
     def __init__(self, xrange, yrange):
         # define class variables
         self.segments = [] # list of segments
-        self.nodes = [] # list of nodes
+        self.xlim = xrange
+        self.ylim = yrange
 
         # add each wall as a segment
-        self.segments.append(Segment(Node(xrange[0], yrange[0]),
-                                Node(xrange[1], yrange[0]), 1)) # lower wall
+        self.segments.append(Segment(Point(xrange[0], yrange[0]),
+                                     Point(xrange[1], yrange[0]), 1)) # lower wall
 
-        self.segments.append(Segment(Node(xrange[1], yrange[0]),
-                                Node(xrange[1], yrange[1]), 1)) # right wall
+        self.segments.append(Segment(Point(xrange[1], yrange[0]),
+                                     Point(xrange[1], yrange[1]), 1)) # right wall
 
-        self.segments.append(Segment(Node(xrange[1], yrange[1]),
-                                Node(xrange[0], yrange[1]), 1)) # top wall
+        self.segments.append(Segment(Point(xrange[1], yrange[1]),
+                                     Point(xrange[0], yrange[1]), 1)) # top wall
 
-        self.segments.append(Segment(Node(xrange[1], yrange[1]),
-                                Node(xrange[0], yrange[1]), 1)) # left wall
+        self.segments.append(Segment(Point(xrange[1], yrange[1]),
+                                     Point(xrange[0], yrange[1]), 1)) # left wall
 
     ''' addSegment()
     INPUTS:
@@ -48,20 +48,20 @@ class Map():
     Node2: node describing second endpoint
     prob: probability that segment is truly a wall
     '''
-    def addSegment(self, Node1, Node2, prob):
-        self.segments.append(Segment(Node1, Node2, prop))
+    def addSegment(self, pt1, pt2, prob):
+        self.segments.append(Segment(pt1, pt2, prob))
         # TODO: do some checking here to see if we can elide our segment with another
         # i.e. check if this segment is "near" any other segments
         # for each nearby segment, check colinearity
         # if within a specific threshold, combine the segments
         # be careful not to close doorway gaps (@Tyler)
 
-    def localPlanner(self, node1, node2):
-        moveSegment = Segment(node1, node2)
+    def localPlanner(self, pt1, pt2):
+        moveSegment = Segment(pt1, pt2)
 
         for segment in self.segments:
             # If plan crosses a wall -> FAIL
-            if SegmentCrossSegment(moveSegment, segment):
+            if SegmentCrossSegment(moveSegment.seg, segment.seg):
                 return False
 
         return True
@@ -85,7 +85,7 @@ class Robot():
     INPUTS:
     walls: list of wall segments in world (TODO: make grid points instead)
     map: Map class instance
-    pinit: [x, y] describing position of robot center at start
+    pinit: Point describing position of robot center at start
     tinit: angle (radians) describing orientation of robot at start
     '''
     def __init__(self, walls, map, pinit, tinit):
@@ -99,7 +99,7 @@ class Robot():
     Robot will turn and move towards a point until it encounters an obstacle.
     Turn will happen first, then movement.
     INPUTS:
-    p2: [x, y] describing final position of robot
+    p2: Point describing final position of robot
 
     RETURNS:
     True if successfully travelled, false if wall hit and map updated
@@ -107,7 +107,7 @@ class Robot():
     def goto(self, p2):
         ## Turn to face where we need to go
         # compute angle to go to p2
-        t = getAngle(self.pos, p2)
+        t = self.pos.getAngle(p2)
         # turn!
         if not turn(t):
             # collision occured while turning. Map is updated.
@@ -117,6 +117,7 @@ class Robot():
         ## Move towards our point!
         # also handles collision checking and map updating
         self.pos = self.distSensor(p2)
+        return
 
 
 
@@ -141,7 +142,7 @@ class Robot():
     '''
     def distSensor(self, p2):
         # create a segment between current position and final position
-        path = ((self.pos[0], self.pos[1]), (p2[0], p2[1]))
+        path = Segment(self.pos, p2)
 
         closestWall = -1
         closestWallDist = -1
@@ -149,7 +150,7 @@ class Robot():
         # check each wall for a collision
         for wall in self.walls:
             # TODO: implement SegmentCrossRectangle
-            (i1, i2, segPos) = SegmentCrossRectangle(wall, path, ROBOT_WIDTH / 2)
+            (i1, i2, segPos) = SegmentCrossRectangle(wall, path.seg, ROBOT_WIDTH / 2)
             if (i1 == -1):
                 # no collision
                 continue
@@ -172,14 +173,17 @@ class Robot():
             # no wall found!
             return p2
         else:
+            # Hit a wall!!
             # update map
-            addSegment(Node(i1[0], i1[1]),
-                       Node(i2[0], i2[1]), 1)
+            map.addSegment(Point(i1[0], i1[1]),
+                           Point(i2[0], i2[1]), 1)
 
             # back away from intersection by a little
             # TODO: BACK AWAY FROM THE SEGMENT BY A little
             # and double check that you aren't moving past the starting point
             # return that final position
+            # (for now, just go to segment)
+            return closestWallSegPos
 
 
 

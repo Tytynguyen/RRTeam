@@ -73,28 +73,34 @@ class Visualization():
         plt.pause(0.001)
 
 # TODO: may not be necessary
-class Node:
+class Point:
     def __init__(self, x, y):
         # Save the state matching this node.
         self.x = x
         self.y = y
 
+    def __add__(self, o):
+        return Point(self.x + o.x, self.y + o.y)
+
     # Report distance to another node (Euclidean)
-    def Dist(self, other):
+    def dist(self, other):
         return np.sqrt((other.x - self.x)**2 + (other.y - self.y)**2)
 
+    def getAngle(self, other):
+        return np.atan2(p2[1] - p1[1], p2[0] - p1[0])
+
     # TODO: Report probability between 0-1 of a wall existing between two nodes
-    def ProbWall(self, other):
-        # Perhaps use Dist() as a metric? Low distance between two nodes -> high probability of wall
-        # TODO: Problem if distance is less than 1! Fix
-        return 1/self.Dist(other)
+    # def probWall(self, other):
+    #     # Perhaps use Dist() as a metric? Low distance between two nodes -> high probability of wall
+    #     # TODO: Problem if distance is less than 1! Fix
+    #     return 1/self.Dist(other)
 
 # The special Segment class carries a probability and is used only for mapping
 # predicted segments. Walls are represented as pairs of points.
 class Segment:
-    def __init__(self, Node1, Node2, prob):
+    def __init__(self, pt1, pt2, prob = 1):
         # Save the state matching this segment between nodes
-        self.seg  = ((Node1.x, Node1.y), (Node2.x, Node2.y))
+        self.seg  = ((pt1.x, pt1.y), (pt2.x, pt2.y))
         self.prob = prob
 
     def SetProb(self, prob):

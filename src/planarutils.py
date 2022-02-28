@@ -32,19 +32,6 @@
 #   All functions return True or False.
 #
 import numpy as np
-
-######################################################################
-#
-#   TURNING STUFF
-#
-#  Angle between two postions
-#
-def getAngle(p1, p2):
-    return np.atan2(p2[1] - p1[1], p2[0] - p1[0])
-
-def getDist(p1, p2):
-    return np.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
-
 ######################################################################
 #
 #   RELATIVE TO POINT
@@ -173,11 +160,98 @@ def WhereSegmentCrossSegment(sA, sB):
     return -1
 
 
+def SegmentsFromCenterline(centerline, width):
+    # pull out centerline points
+    pt1 = centerline[0]
+    pt2 = centerline[1]
+
+    # compute slope
+    dx = pt2[0] - pt1[0]
+    dy = pt2[1] - pt1[1]
+    if (dx == 0):
+        # the line is vertical.
+        ptA1 = (pt1[0] - width, pt1[1])
+        ptA2 = (pt1[0] + width, pt1[1])
+
+        ptB1 = (pt2[0] - width, pt2[1])
+        ptB2 = (pt2[0] + width, pt2[1])
+
+        return ((ptA1, ptA2), (ptA2, ptB2), (ptB2, ptB1), (ptB1, ptA1))
+
+    if (dy == 0):
+        # the line is horizontal.
+        ptA1 = (pt1[0], pt1[1] - width)
+        ptA2 = (pt1[0], pt1[1] + width)
+
+        ptB1 = (pt2[0], pt2[1] - width)
+        ptB2 = (pt2[0], pt2[1] + width)
+
+        return ((ptA1, ptA2), (ptA2, ptB2), (ptB2, ptB1), (ptB1, ptA1))
+
+    # line is not vertical. Get perpendicular slope
+    perpslope = -dx/dy
+
+    # compute offsets relative to pt1 or pt2
+    xAoffset = np.sqrt(width*width / (1 + perpslope*perpslope))
+    yAoffset = perpslope*xAoffset
+
+    # Add the position of pt1 to get xAs
+    ptA1 = (pt1[0] - xAoffset, pt1[1] - yAoffset)
+    ptA2 = (pt1[0] + xAoffset, pt1[1] + yAoffset)
+    # Add the position of pt1 to get xAs
+    ptB1 = (pt2[0] - xAoffset, pt2[1] - yAoffset)
+    ptB2 = (pt2[0] + xAoffset, pt2[1] + yAoffset)
+
+    return ((ptA1, ptA2), (ptA2, ptB2), (ptB2, ptB1), (ptB1, ptA1))
+
+def FinalPosition(centerline, p1, p2):
+    # pull out centerline points
+    pt1 = centerline[0]
+    pt2 = centerline[1]
+
+    # compute slope
+    dx = pt2[0] - pt1[0]
+    dy = pt2[1] - pt1[1]
+    if (dx == 0):
+        # the line is vertical. Look for a horizontal line
+        if (abs(p1[1] - pt1[1]) > abs(p2[1] - pt1[1])):
+            return [pt1[0], p1[1]]
+        else:
+            return [pt1[0], p2[1]]
+
+    if (dy == 0):
+        # the line is horizontal. Look for a vertical line
+        if (abs(p1[0] - pt1[0]) > abs(p2[0] - pt1[0])):
+            return [p1[0], pt1[1]]
+        else:
+            return [p2[0], pt1[1]]
+
+    # line is not vertical. Get perpendicular slope (TODO: FIX!!)
+    perpslope = -dx/dy
+
+    # compute offsets relative to pt1 or pt2
+    xAoffset = np.sqrt(width*width / (1 + perpslope*perpslope))
+    yAoffset = perpslope*xAoffset
+
+    # Add the position of pt1 to get xAs
+    ptA1 = (pt1[0] - xAoffset, pt1[1] - yAoffset)
+    ptA2 = (pt1[0] + xAoffset, pt1[1] + yAoffset)
+    # Add the position of pt1 to get xAs
+    ptB1 = (pt2[0] - xAoffset, pt2[1] - yAoffset)
+    ptB2 = (pt2[0] + xAoffset, pt2[1] + yAoffset)
+
+    return ((ptA1, ptA2), (ptA2, ptB2), (ptB2, ptB1), (ptB1, ptA1))
+
+def PlanarCross(pt1, pt2):
+    return pt1[0]*pt2[1] - pt1[1]*pt2[0]
+
+
 #
 #   Proximity of Segment to Rectangle
 #
-def SegmentCrossRectangle(s, centerseg, width):
-    # TODO: compute segments from centerline
+def SegmentCrossRectangle(s, centerline, width):
+    ## Compute segments from centerline
+    (srA, srB, srC, srD) = SegmentsFromCenterline(centerline, width)
 
     # check intersection with segments first
     iA = WhereSegmentCrossSegment(s, srA)
@@ -189,6 +263,7 @@ def SegmentCrossRectangle(s, centerseg, width):
     # a line cannot intersect more than two rectangle edges
     pt1 = -1
     pt2 = -1
+    possible_pt2 = -1
     for i in ints:
         if (i == -1):
             # not an intersection
@@ -208,12 +283,42 @@ def SegmentCrossRectangle(s, centerseg, width):
             pt1 = i[0]
             pt2 = i[1]
 
-    # TODO: if pt1 or pt2 not filled, check if line has endpoints inside rectangle
+    if (pt2 == -1):
+        # one or more endpoints may be inside of the rectangle.
+        # check if other wall point has same cross product sign with rectangle edges.
+        rectangle_edges = (srA, srB, srC, srD)
+        for pt in s:
+            lastSign = 0
+            inside = False
+            for edge in rectangle_edges:
+                # create vector connecting to first point
+                vec = (pt, s[0])
+                # compute the cross product
+                sign = planarCross(pt, vec)
+                if (sign > 0 and lastSign < 0):
+                    # point is not inside the rectangle!
+                    print("No points in rectangle")
+                    inside = False
+                    break
+                inside = True
+
+            # add the point
+            if (inside and pt1 == -1):
+                pt1 = pt
+            elif inside:
+                pt2 = pt
+                break
 
 
     # TODO: compute distance along centerline to wall (if relevant)
+    if (pt2 == -1):
+        # there's no wall, go to final position
+        segpos = centerline[1]
+    else:
+        # there is a wall... compute closest position
+        segpos = FinalPosition(centerline, pt1, pt2)
 
-    return (pt1, pt2)
+    return (pt1, pt2, segpos)
 
 #
 #   Proximity of Segment to Segment
