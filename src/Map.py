@@ -205,6 +205,8 @@ def TestVisualization():
 
     start = Point(1, 1)
     goal  = Point(9, 14)
+    minPt = (0, 0)   # (xmin, ymin)
+    maxPt = (10, 15) # (xmax, ymax)
 
     # Gimme some test segments to visualize.
     points = (Point(2, 4), Point(4, 4), Point(8, 12), Point(5, 9))
@@ -221,12 +223,27 @@ def TestVisualization():
     visual.ShowPoints(points)
     visual.ShowSegments(segments)
     visual.ShowFigure()
-    input("ProbSegment test displayed.")
+    input("ProbSegment test displayed. (hit return to continue)")
     visual.ClearFigure()
     visual.ShowFigure()
-    input("World cleared.")
+    input("World cleared. (hit return to continue)")
 
+    # TEST RRT
+    # Start the tree with start state and no parent
+    # execute the search
+    tree = [Node(start, None, None)]
+    tree = RRT(tree, goal, Nmax, minPt[0], minPt[1], maxPt[0], maxPt[1]) # TODO try to reduce arguments to RRT to maxPt, minPt form
 
+    if tree is None:
+        print("UNABLE TO FIND A PATH in %d steps", Nmax)
+        input("(hit return to exit)")
+        return
+    
+    # Show the path.
+    visual.ShowNodes(tree)
+    print("PATH found after ", len(tree), " samples.")
+    input("(hit return to exit)")
+    return
 
 def main():
     TestVisualization()
