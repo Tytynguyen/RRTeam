@@ -188,9 +188,12 @@ class Robot():
 
 
 
+'''
+Runs an example visualization process that generates fake outputs from a 
+planning program in order to use each of the visualization functions.
 
-
-
+RETURNS: None
+'''
 def TestVisualization():
     # Generate example world with walls
     walls = (((2,  4), (5,  9)),

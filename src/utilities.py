@@ -16,9 +16,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-#
-# Probability Segment Plotting
-#
+'''
+Aggregates visualization of each aspect of the space (mapping segments, points,
+planning nodes, etc.).
+
+STORES: Min/max bounds in x and y directions
+'''
 class Visualization():
     def __init__(self, maxPt, minPt = (0, 0)):
         # Clear and show.
@@ -27,6 +30,9 @@ class Visualization():
         self.ClearFigure()
         self.ShowFigure()
 
+    '''
+    Clear figure and prep space to draw something new
+    '''
     def ClearFigure(self):
         # Clear the current, or create a new figure.
         plt.clf()
@@ -38,8 +44,10 @@ class Visualization():
         plt.gca().set_ylim(self.min[1], self.max[1])
         plt.gca().set_aspect('equal')
 
-    # Takes a list of segments to display, as well as a probability cutoff
-    # such that segments with probability below the cutoff are not displayed.
+    '''
+    Takes a list of segments to display, as well as a probability cutoff
+    such that segments with probability below the cutoff are not displayed.
+    '''
     def ShowSegments(self, segments, cutoff=0):
         # Show the segments, with opacity determined by probability.
         # Do not display segments with probabilities below the cutoff.
@@ -49,8 +57,10 @@ class Visualization():
                      'k', linewidth=2,
                      alpha = segment.prob * (segment.prob > cutoff))
 
-    # Takes the list of existing walls (in (point, point) form) and displays them.
-    # Also takes start and goal states (in point form) and displays checks.
+    '''
+    Takes the list of existing walls (in (point, point) form) and displays them.
+    Also takes start and goal states (in point form) and displays checks.
+    '''
     def ShowWorld(self, walls, start, goal):
         for wall in walls:
             plt.plot([wall[0][0], wall[1][0]],
@@ -59,20 +69,34 @@ class Visualization():
         plt.plot(start[0], start[1], 'rx', markersize = 5)
         plt.plot( goal[0],  goal[1], 'gx', markersize = 5)
 
-    # Takes the location and orientation of the robot and displays it
+    '''
+    Takes the location and orientation of the robot and displays it
+    '''
     def ShowBot(self, loc, theta):
         plt.plot(loc[0], loc[1], marker=(3, 0, theta+90), markersize=10)
 
-    # Takes a list of points and displays them!
+    '''
+    Takes a list of points and displays them!
+    '''
     def ShowPoints(self, points):
         for point in points:
             plt.plot(point.x, point.y, 'ko', markersize=5)
 
+    '''
+    Shows the plot
+    '''
     def ShowFigure(self):
         # Show the plot.
         plt.pause(0.001)
 
-# TODO: may not be necessary
+    #@@@@@@@@@@@@@@@@@@@ RRTStar Visualization @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+'''
+Saves the coordinates of a point.
+
+STORES: Coordinates of the point
+'''
 class Point:
     def __init__(self, x, y):
         # Save the state matching this point.
