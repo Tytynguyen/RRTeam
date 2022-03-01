@@ -112,12 +112,15 @@ def getPathSegments(node):
     segments = []
 
     while node.parent is not None:
-        segments.append(Segment(node,node.parent))
+        segments.append(Segment(node, node.parent))
         node = node.parent
 
     return segments
 
 def getPathNodes(node):
+    """
+    Get the nodes from the given node to the base of the tree
+    """
     nodes = []
 
     while node.parent is not None:
@@ -140,17 +143,26 @@ def TStar(startnode, goalnode, map, robot):
     ymax = map.ylim[1]
     tree = RRT([startnode], goalnode, Nmax, xmin, xmax, ymin, ymax)
 
+    path = getPathNodes(tree[-1]) # Get the path from the start node to goal
 
-    for curnodei in range(len(movenodes)-1,0):
-        curnode = tree[curnodei]
+    for curnodei in range(len(path)):
+        curnode = path[curnodei]
 
         # Fails to make it
         if not robot.goto(curnode.point):
             p = robot.pos
-            # kill all children
-            curnode.children = []
+            # Kill all children of previous node
+            prevnode = path[curnodei-1]
+            prevnode.children = []
+
+            # Kill previous node by removing it from the children list of its parent
+            for curchildi in range(len(curnode.children)):
+                curpoint = curnode.children[curchildi].point
+                if curpoint.x == curnode.point.x and curpoint.y == curnode.point.y:
+                    curnode.children.pop(curchildi)
+
         else:
-            return tmovenodes
+            return path
 
 
 
