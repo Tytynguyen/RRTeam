@@ -150,6 +150,9 @@ class Point:
     def __add__(self, o):
         return Point(self.x + o.x, self.y + o.y)
 
+    def __eq__(self, o):
+        return self.x == o.x and self.y == o.y
+
     # Report distance to another poimt (Euclidean)
     def dist(self, other):
         return np.sqrt((other.x - self.x)**2 + (other.y - self.y)**2)
