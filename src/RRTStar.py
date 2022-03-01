@@ -23,8 +23,8 @@
 import random
 
 import numpy as np
-from src.planarutils import *
-from src.utilities import *
+from planarutils import *
+from utilities import *
 
 dstep = 5
 deadreckoning = 0.05
