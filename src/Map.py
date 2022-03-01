@@ -196,15 +196,15 @@ RETURNS: None
 '''
 def TestVisualization():
     # Generate example world with walls
-    walls = (((2,  4), (5,  9)),
-             ((5,  9), (4,  4)),
-             ((4,  4), (2,  4)),
-             ((2, 12), (9, 12)),
-             ((2, 14), (9, 12)),
-             ((2, 12), (2, 14)))
+    walls = ((Point(2,  4), Point(5,  9)),
+             (Point(5,  9), Point(4,  4)),
+             (Point(4,  4), Point(2,  4)),
+             (Point(2, 12), Point(9, 12)),
+             (Point(2, 14), Point(9, 12)),
+             (Point(2, 12), Point(2, 14)))
 
-    start = (1, 1)
-    goal  = (9, 14)
+    start = Point(1, 1)
+    goal  = Point(9, 14)
 
     # Gimme some test segments to visualize.
     points = (Point(2, 4), Point(4, 4), Point(8, 12), Point(5, 9))
@@ -213,13 +213,20 @@ def TestVisualization():
                 Segment(points[0], points[2], 0.20),
                 Segment(points[3], points[2], 0.83),
                 Segment(points[1], points[3], 1))
-    visual = Visualization((10, 15))
-    visual.ShowWorld(walls, start, goal)
+    
+    visual = Visualization(walls, start, goal, (10, 15))
+    
+    visual.ShowWorld()
     visual.ShowBot(start, 0)
     visual.ShowPoints(points)
     visual.ShowSegments(segments)
     visual.ShowFigure()
-    input("Test displayed.")
+    input("ProbSegment test displayed.")
+    visual.ClearFigure()
+    visual.ShowFigure()
+    input("World cleared.")
+
+
 
 def main():
     TestVisualization()

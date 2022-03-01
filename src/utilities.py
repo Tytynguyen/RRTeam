@@ -15,18 +15,25 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+from RRTStar import *
 
 '''
 Aggregates visualization of each aspect of the space (mapping segments, points,
 planning nodes, etc.).
 
-STORES: Min/max bounds in x and y directions
+STORES: Min/max bounds in x and y directions, 
+        walls (list of (Point, Point) tuples), 
+        start (Point), 
+        goal (Point)
 '''
 class Visualization():
-    def __init__(self, maxPt, minPt = (0, 0)):
+    def __init__(self, walls, start, goal, maxPt, minPt = (0, 0), ):
         # Clear and show.
         self.min      = minPt
         self.max      = maxPt
+        self.walls    = walls
+        self.start    = start
+        self.goal     = goal
         self.ClearFigure()
         self.ShowFigure()
 
@@ -44,43 +51,81 @@ class Visualization():
         plt.gca().set_ylim(self.min[1], self.max[1])
         plt.gca().set_aspect('equal')
 
+        # Show the world
+        self.ShowWorld()
+
     '''
     Takes a list of segments to display, as well as a probability cutoff
     such that segments with probability below the cutoff are not displayed.
+
+    ARGS: segments - list of segments to print
+    cutoff - probability below which segments are not displayed
+
+    RETURNS: none
     '''
     def ShowSegments(self, segments, cutoff=0):
         # Show the segments, with opacity determined by probability.
         # Do not display segments with probabilities below the cutoff.
         for segment in segments:
-            plt.plot([segment.seg[0][0], segment.seg[1][0]],
-                     [segment.seg[0][1], segment.seg[1][1]],
+            plt.plot([segment.pt1.x, segment.pt2.x],
+                     [segment.pt1.y, segment.pt2.y],
                      'k', linewidth=2,
                      alpha = segment.prob * (segment.prob > cutoff))
 
     '''
-    Takes the list of existing walls (in (point, point) form) and displays them.
-    Also takes start and goal states (in point form) and displays checks.
+    Takes the list of existing walls (in (Point, Point) form) and displays them.
+    Also takes start and goal states (in Point form) and displays crosses.
+
+    ARGS: None (uses walls, start, and goals properties)
+    RETURNS: None
     '''
-    def ShowWorld(self, walls, start, goal):
-        for wall in walls:
-            plt.plot([wall[0][0], wall[1][0]],
-                     [wall[0][1], wall[1][1]],
+    def ShowWorld(self):
+        for wall in self.walls:
+            plt.plot([wall[0].x, wall[1].x],
+                     [wall[0].y, wall[1].y],
                      'r', linewidth=3)
-        plt.plot(start[0], start[1], 'rx', markersize = 5)
-        plt.plot( goal[0],  goal[1], 'gx', markersize = 5)
+        plt.plot(self.start.x, self.start.y, 'rx', markersize = 5)
+        plt.plot(self.goal.x,  self.goal.y,  'gx', markersize = 5)
 
     '''
-    Takes the location and orientation of the robot and displays it
+    Takes the location and orientation of the robot and displays it.
+    ARGS: loc - location of the bot (x, y)
+    theta - orientation of the box, relative to positive x axis, in degrees
+    RETURNS: None
     '''
     def ShowBot(self, loc, theta):
-        plt.plot(loc[0], loc[1], marker=(3, 0, theta+90), markersize=10)
+        plt.plot(loc.x, loc.y, marker=(3, 0, theta+90), markersize=10)
 
     '''
-    Takes a list of points and displays them!
+    Takes a point and displays it
+    ARGS: point - Point object to display
+    disp - string indicating how point should be displayed
+    RETURNS: None
+    '''
+    def ShowPoint(self, point, disp):
+        plt.plot(point.x, point.y, disp, markersize=5)
+
+
+    '''
+    Takes a list of points and displays them
+    ARGS: points - list of Point objects
+    RETURNS: None
     '''
     def ShowPoints(self, points):
         for point in points:
-            plt.plot(point.x, point.y, 'ko', markersize=5)
+            # Points associated with walls are black
+            self.ShowPoint(point, 'ko')
+
+
+    '''
+    Takes a list of nodes and displays their points
+    ARGS: nodes - list of RRT Node objects
+    RETURNS: None
+    '''
+    def ShowNodes(self, nodes):
+        for node in nodes:
+            # Points associated with RRT nodes are cyan
+            ShowPoint(node.point, 'co')
 
     '''
     Shows the plot
@@ -90,7 +135,6 @@ class Visualization():
         plt.pause(0.001)
 
     #@@@@@@@@@@@@@@@@@@@ RRTStar Visualization @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
 
 '''
 Saves the coordinates of a point.
@@ -113,12 +157,19 @@ class Point:
     def getAngle(self, other):
         return np.atan2(p2[1] - p1[1], p2[0] - p1[0])
 
-# The special Segment class carries a probability and is used only for mapping
-# predicted segments. Walls are represented as pairs of points.
+#
+'''
+The special Segment class carries a probability and is used only for mapping
+predicted segments. Walls are represented as pairs of points.
+
+STORES: A tuple representing the two points, as well as each point
+'''
 class Segment:
     def __init__(self, pt1, pt2, prob = 1):
         # Save the state matching this segment between points
         self.seg  = ((pt1.x, pt1.y), (pt2.x, pt2.y))
+        self.pt1  = pt1
+        self.pt2  = pt2
         self.prob = prob
 
     def SetProb(self, prob):
