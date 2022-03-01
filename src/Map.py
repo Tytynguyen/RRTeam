@@ -1,10 +1,11 @@
 #   Map.py
 #
-#   Stores data structures for Map and Nodes
+#   Stores data structures for Map and Points
 
 import numpy as np
 from planarutils import *
 from utilities import *
+from RRTStar import *
 
 ## GLOBAL CONSTANTS
 SENSOR_RANGE = 1 # in (x, y) units
@@ -44,8 +45,8 @@ class Map():
 
     ''' addSegment()
     INPUTS:
-    Node1: node describing first endpoint
-    Node2: node describing second endpoint
+    pt1: pt describing first endpoint
+    pt2: pt describing second endpoint
     prob: probability that segment is truly a wall
     '''
     def addSegment(self, pt1, pt2, prob):
@@ -203,16 +204,16 @@ def TestVisualization():
     goal  = (9, 14)
 
     # Gimme some test segments to visualize.
-    nodes = (Node(2, 4), Node(4, 4), Node(8, 12), Node(5, 9))
-    segments = (Segment(nodes[0], nodes[1], 0.46),
-                Segment(nodes[1], nodes[2], 0.63),
-                Segment(nodes[0], nodes[2], 0.20),
-                Segment(nodes[3], nodes[2], 0.83),
-                Segment(nodes[1], nodes[3], 1))
+    points = (Point(2, 4), Point(4, 4), Point(8, 12), Point(5, 9))
+    segments = (Segment(points[0], points[1], 0.46),
+                Segment(points[1], points[2], 0.63),
+                Segment(points[0], points[2], 0.20),
+                Segment(points[3], points[2], 0.83),
+                Segment(points[1], points[3], 1))
     visual = Visualization((10, 15))
     visual.ShowWorld(walls, start, goal)
     visual.ShowBot(start, 0)
-    visual.ShowNodes(nodes)
+    visual.ShowPoints(points)
     visual.ShowSegments(segments)
     visual.ShowFigure()
     input("Test displayed.")
