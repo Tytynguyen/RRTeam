@@ -35,7 +35,7 @@ class RRTNode:
     """
     Tree node class that stores parent information and the point vector
     """
-    def __init__(self, point, parentnode=[], childrennodes=[]):
+    def __init__(self, point, parentnode=None, childrennodes=None):
         self.point = point
         self.parent = parentnode
         self.children = childrennodes
@@ -50,21 +50,27 @@ class RRTStar:
         self.goalPoint = goalPt
         self.robot = robot
         self.map = map
-        self.tree = RRTNode(self.goalPoint)
+        self.tree = [RRTNode(self.goalPoint)]
         self.minPt = minPt
         self.maxPt = maxPt
-        self.newpath = False
+        self.newpath = True
 
         # class variables for viz
 
     # RETURN GOAL NODE
     def update(self):
+
         if self.newpath:
-            return  self.RRT(self.tree,self.goalPoint,Nmax,self.minPt[0],self.maxPt[0],self.minPt[1],self.maxPt[1],self.map)
+            goal = self.RRT(self.startPoint,Nmax,self.minPt[0],self.maxPt[0],self.minPt[1],self.maxPt[1],self.map)
+            self.newpath = False
+            print(len(self.tree))
+
+            return goal
         else:
+            print(self.robot.pos)
             return self.TStar(self.tree, self.robot)
 
-    def RRT(self, tree, goalpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):
+    def RRT(self, goalpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):
         """
         Generate a RRT for use in planning.
 
@@ -96,7 +102,7 @@ class RRTStar:
                 targetpoint = Point(x, y)
 
             # Find the nearest node TODO: Make this more efficient...
-            list = [(node.point.dist(targetpoint), node) for node in tree]
+            list = [(node.point.dist(targetpoint), node) for node in self.tree]
             (d2, nearnode)  = min(list)
 
             nearpoint = nearnode.point
@@ -107,27 +113,33 @@ class RRTStar:
             ny = dstep*np.sin(t) + nearpoint.y
             nextpoint = Point(nx, ny)
             nextnode = RRTNode(nextpoint, nearnode)
-            tree.append(nextnode)
+            self.tree.append(nextnode)
 
             # Check whether nearpoint connects to next generated point
             if mapobj.localPlanner(nearpoint, nextpoint):
-                tree.append(nextnode)
+                self.tree.append(nextnode)
 
                 if nearnode.children is None:
                     nearnode.children = [nextnode]
                 else:
                     nearnode.children.append(nextnode)
 
+                nextnode.parent = nearnode
+
                 # Also try to connect the goal.
                 if mapobj.localPlanner(nextpoint, goalpoint):
                     goalnode = RRTNode(goalpoint, nextnode)
-                    tree.append(goalnode)
-                    nextnode.children.append(goalnode)
+                    self.tree.append(goalnode)
 
+                    if nextnode.children is None:
+                        nextnode.children = [goalnode]
+                    else:
+                        nextnode.children.append(goalnode)
+                    self.startNode = goalnode
                     return goalnode
 
             # Abort if tree is too large
-            if (len(tree) >= Nmax):
+            if (len(self.tree) >= Nmax):
                 return None
 
 
@@ -167,9 +179,9 @@ class RRTStar:
         Run TStar given a start node and end node, using RRT to generate a tree.
         """
         # Build initial tree
-        path = getPathNodes(tree[-1])  # Get the path from the start node to goal
+        path = self.getPathNodes(self.startNode)  # Get the path from the start node to goal
 
-        for curnodei in range(len(path)):
+        for curnodei in range(1,len(path)):
             curnode = path[curnodei]
 
             # Fails to make it

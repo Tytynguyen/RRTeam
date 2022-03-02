@@ -151,12 +151,17 @@ class Point:
     def __eq__(self, o):
         return self.x == o.x and self.y == o.y
 
+    def __repr__(self):
+        return str((self.x,self.y))
+
+
     # Report distance to another poimt (Euclidean)
     def dist(self, other):
         return np.sqrt((other.x - self.x)**2 + (other.y - self.y)**2)
 
     def getAngle(self, other):
-        return np.atan2(p2[1] - p1[1], p2[0] - p1[0])
+        return np.arctan2(other.y - self.y, other.x - self.x)
+
 
 
 '''

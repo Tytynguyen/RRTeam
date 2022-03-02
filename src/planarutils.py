@@ -299,7 +299,7 @@ def SegmentCrossRectangle(s, centerline, width):
                 # create vector connecting to first point
                 vec = (pt, s[0])
                 # compute the cross product
-                sign = planarCross(pt, vec)
+                sign = PlanarCross(pt, vec)
                 if (sign > 0 and lastSign < 0):
                     # point is not inside the rectangle!
                     print("No points in rectangle")

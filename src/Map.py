@@ -110,7 +110,7 @@ class Robot():
         # compute angle to go to p2
         t = self.pos.getAngle(p2)
         # turn!
-        if not turn(t):
+        if not self.turn(t):
             # collision occured while turning. Map is updated.
             # THIS SHOULD NOT HAPPEN IN CURRENT VERSION
             return False
@@ -151,7 +151,8 @@ class Robot():
         # check each wall for a collision
         for wall in self.walls:
             # TODO: implement SegmentCrossRectangle
-            (i1, i2, segPos) = SegmentCrossRectangle(wall, path.seg, ROBOT_WIDTH / 2)
+            wallseg = Segment(wall[0], wall[1])
+            (i1, i2, segPos) = SegmentCrossRectangle(wallseg.seg, path.seg, ROBOT_WIDTH / 2)
             if (i1 == -1):
                 # no collision
                 continue
@@ -297,14 +298,16 @@ def MapFromPath():
         visual.ShowNodes(planner.tree)
         if (goalNode is not None):
             visual.ShowSegments(planner.getPathSegments(goalNode))
-        visual.showBot(robot)
-        visual.showFigure()
+        visual.ShowBot(robot)
+        visual.ShowFigure()
+        input("okay")
+        visual.ClearFigure()
 
 
 def main():
-    TestVisualization()
+    #TestVisualization()
 
-    # MapFromPath()
+    MapFromPath()
 
 if __name__== "__main__":
     main()
