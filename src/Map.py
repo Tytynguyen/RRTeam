@@ -258,8 +258,8 @@ def MapFromPath():
              (Point(2, 14), Point(9, 12)),
              (Point(2, 12), Point(2, 14)))
 
-    xlim = [0, 0]
-    ylim = [10, 15]
+    startPt = [0, 0]
+    goalPt = [10, 15]
 
     # define starting postion
     pstart = Point(1, 1)
@@ -273,12 +273,18 @@ def MapFromPath():
     # create a robot
     robot = Robot(walls, robotmap, Point(1, 1), 0)
 
-    # create TStar
-
     # create viz
+    visual = Visualization(walls, startPt, goalPt, maxPt)
+
+    visual.ShowWorld()
+    visual.ShowBot(robot)
+    visual.ShowFigure()
+    input("World cleared. (hit return to continue)")
 
     ## Main loop: loop until hit goal or get stuck
-
+    while True:
+        # Create a path from goal to start
+        
 
 
 def main():

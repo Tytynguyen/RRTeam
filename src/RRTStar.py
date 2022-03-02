@@ -41,6 +41,22 @@ class RRTNode:
         self.children = childrennodes
 
 
+class RRTStar:
+    def __init__(self, startPt, goalPt, robot, map):
+        # define class variables
+        self.startPoint = startPt
+        self.goalPoint = goalPt
+        self.robot = robot
+        self.map = map
+        self.tree = ???
+        # TODO: add in xlim and ylim (map.xlim, map.ylim)
+
+        # class variables for viz
+
+    # RETURN GOAL NODE
+    def update(self):
+        pass
+
 def RRT(tree, goalpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):
     """
     Generate a RRT for use in planning.
