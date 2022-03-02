@@ -87,13 +87,12 @@ class Visualization():
         plt.plot(self.goal.x,  self.goal.y,  'gx', markersize = 5)
 
     '''
-    Takes the location and orientation of the robot and displays it.
-    ARGS: loc - location of the bot (x, y)
-    theta - orientation of the box, relative to positive x axis, in degrees
+    Takes a robot and displays it.
+    ARGS: robot (of Robot type)
     RETURNS: None
     '''
-    def ShowBot(self, loc, theta):
-        plt.plot(loc.x, loc.y, marker=(3, 0, theta+90), markersize=10)
+    def ShowBot(self, robot):
+        plt.plot(robot.pos.x, robot.pos.y, marker=(3, 0, robot.theta+90), markersize=10)
 
     '''
     Takes a point and displays it
