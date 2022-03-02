@@ -40,6 +40,8 @@ class RRTNode:
         self.parent = parentnode
         self.children = childrennodes
 
+    def __eq__(self, other):
+        return self.point == other.point
 
 class RRTStar:
 
