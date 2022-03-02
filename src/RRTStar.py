@@ -129,6 +129,12 @@ def getPathNodes(node):
 
     return nodes
 
+def getPoints(tree, list=[]):
+    list.append(tree)
+    for child in tree.children:
+        getPoints(tree,list)
+
+    return list
 
 def TStar(startnode, goalnode, map, robot):
     """
@@ -141,9 +147,9 @@ def TStar(startnode, goalnode, map, robot):
     xmax = map.xlim[1]
     ymin = map.ylim[0]
     ymax = map.ylim[1]
-    tree = RRT([startnode], goalnode, Nmax, xmin, xmax, ymin, ymax)
+    tree = RRT([goalnode], startnode, Nmax, xmin, xmax, ymin, ymax)
 
-    path = getPathNodes(tree[-1]) # Get the path from the start node to goal
+    path = getPathNodes(tree[-1])  # Get the path from the start node to goal
 
     for curnodei in range(len(path)):
         curnode = path[curnodei]
