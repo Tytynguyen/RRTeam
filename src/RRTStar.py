@@ -26,7 +26,7 @@ import numpy as np
 from planarutils import *
 from utilities import *
 
-dstep = 5
+dstep = 0.5
 deadreckoning = 0.05
 Nmax = 1000
 
