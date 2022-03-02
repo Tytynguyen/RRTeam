@@ -245,10 +245,10 @@ def FinalPosition(centerline, p1, p2):
     d2 = np.sqrt(xAoffset2*xAoffset2 + yAoffset2*yAoffset2)
     if (d1 > d2):
         # pick the second point
-        return (pt1[0] + xAoffset2, pt1[1] + yAoffset2)
+        return (pt1[0] + xAoffset2 - 0.2, pt1[1] + yAoffset2 - 0.2)
     else:
         # pick the first point
-        return (pt1[0] + xAoffset1, pt1[1] + yAoffset1)
+        return (pt1[0] + xAoffset1 - 0.2, pt1[1] + yAoffset1 - 0.2)
 
 def PlanarCross(pt1, pt2):
     return pt1[0]*pt2[1] - pt1[1]*pt2[0]

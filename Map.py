@@ -10,7 +10,7 @@ from RRTStar import *
 ## GLOBAL CONSTANTS
 SENSOR_RANGE = 1 # in (x, y) units
 
-ROBOT_WIDTH = 0.01
+ROBOT_WIDTH = 0.05
 ## END GLOBAL CONSTANTS
 
 '''
@@ -266,8 +266,8 @@ def TestVisualization():
 def MapFromPath():
     ## SETUP
     # create a world (walls)
-    walls = ((Point(4,  0), Point(4,  9)),
-             (Point(4,  7), Point(9,  7)))
+    walls = ((Point(4,  0), Point(4,  5)),
+             (Point(4,  10), Point(9,  10)))
     # walls = ((Point(2,  4), Point(5,  9)),
     #          (Point(5,  9), Point(4,  4)),
     #          (Point(4,  4), Point(2,  4)),
