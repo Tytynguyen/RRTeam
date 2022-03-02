@@ -245,8 +245,43 @@ def TestVisualization():
     input("(hit return to exit)")
     return
 
+def MapFromPath():
+    ## SETUP
+    # create a world (walls)
+    walls = ((Point(2,  4), Point(5,  9)),
+             (Point(5,  9), Point(4,  4)),
+             (Point(4,  4), Point(2,  4)),
+             (Point(2, 12), Point(9, 12)),
+             (Point(2, 14), Point(9, 12)),
+             (Point(2, 12), Point(2, 14)))
+
+    xlim = [0, 10]
+    ylim = [0, 15]
+
+    # define starting postion
+    pstart = Point(1, 1)
+    tstart = 0
+    # define goal position
+    pgoal = Point(9, 9)
+
+    # create a map
+    robotmap = Map(xlim, ylim)
+
+    # create a robot
+    robot = Robot(walls, robotmap, Point(1, 1), 0)
+
+    # create TStar
+
+    # create viz
+
+    ## Main loop: loop until hit goal or get stuck
+    
+
+
 def main():
-    TestVisualization()
+    # TestVisualization()
+
+    MapFromPath()
 
 if __name__== "__main__":
     main()
