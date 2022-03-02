@@ -258,13 +258,25 @@ def MapFromPath():
     xlim = [0, 10]
     ylim = [0, 15]
 
+    # define starting postion
+    pstart = Point(1, 1)
+    tstart = 0
+    # define goal position
+    pgoal = Point(9, 9)
+
     # create a map
     robotmap = Map(xlim, ylim)
 
     # create a robot
     robot = Robot(walls, robotmap, Point(1, 1), 0)
 
+    # create TStar
+
+    # create viz
+
+    ## Main loop: loop until hit goal or get stuck
     
+
 
 def main():
     # TestVisualization()
