@@ -43,10 +43,10 @@ class RRTNode:
 
 class RRTStar:
 
-    def __init__(self, startPt, goalPt, robot, map, minPt, maxPt):
+    def __init__(self, robotPt, goalPt, robot, map, minPt, maxPt):
         # define class variables
-        self.startPoint = startPt
-        self.startNode = RRTNode(startPt)
+        self.robotPoint = robotPt
+        self.robotNode = RRTNode(self.robotPoint)
         self.goalPoint = goalPt
         self.robot = robot
         self.map = map
@@ -59,18 +59,17 @@ class RRTStar:
 
     # RETURN GOAL NODE
     def update(self):
-
         if self.newpath:
-            goal = self.RRT(self.startPoint,Nmax,self.minPt[0],self.maxPt[0],self.minPt[1],self.maxPt[1],self.map)
+            robotNode = self.RRT(self.robotPoint,Nmax,self.minPt[0],self.maxPt[0],self.minPt[1],self.maxPt[1],self.map)
             self.newpath = False
             # print(len(self.tree))
 
-            return goal
+            return robotNode
         else:
             # print(self.robot.pos)
             return self.TStar(self.tree, self.robot)
 
-    def RRT(self, goalpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):
+    def RRT(self, robotpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):
         """
         Generate a RRT for use in planning.
 
@@ -94,7 +93,7 @@ class RRTStar:
             # Choose a uniformly random target
             if random.uniform(0.0, 1.0) <= deadreckoning:
                 # Pick goal as target
-                targetpoint = goalpoint
+                targetpoint = robotpoint
             else:
                 # Uniformly pick target
                 x = random.uniform(xmin, xmax)
@@ -113,7 +112,6 @@ class RRTStar:
             ny = dstep*np.sin(t) + nearpoint.y
             nextpoint = Point(nx, ny)
             nextnode = RRTNode(nextpoint, nearnode)
-            self.tree.append(nextnode)
 
             # Check whether nearpoint connects to next generated point
             if mapobj.localPlanner(nearpoint, nextpoint):
@@ -127,16 +125,16 @@ class RRTStar:
                 nextnode.parent = nearnode
 
                 # Also try to connect the goal.
-                if mapobj.localPlanner(nextpoint, goalpoint):
-                    goalnode = RRTNode(goalpoint, nextnode)
-                    self.tree.append(goalnode)
+                if mapobj.localPlanner(nextpoint, robotpoint):
+                    robotnode = RRTNode(robotpoint, nextnode)
+                    self.tree.append(robotnode)
 
                     if nextnode.children is None:
-                        nextnode.children = [goalnode]
+                        nextnode.children = [robotnode]
                     else:
-                        nextnode.children.append(goalnode)
-                    self.startNode = goalnode
-                    return goalnode
+                        nextnode.children.append(robotnode)
+                    self.robotNode = robotnode
+                    return robotnode
 
             # Abort if tree is too large
             if (len(self.tree) >= Nmax):
@@ -179,7 +177,7 @@ class RRTStar:
         Run TStar given a start node and end node, using RRT to generate a tree.
         """
         # Build initial tree
-        path = self.getPathNodes(self.startNode)  # Get the path from the start node to goal
+        path = self.getPathNodes(self.robotNode)  # Get the path from the start node to goal
 
         for curnodei in range(1,len(path)):
             curnode = path[curnodei]
@@ -187,18 +185,26 @@ class RRTStar:
             # Fails to make it
             if not robot.goto(curnode.point):
                 p = robot.pos
-                # Kill all children of previous node
+                # Kill previous node
                 prevnode = path[curnodei-1]
-                prevnode.children = []
+                prevpoint = prevnode.point
 
                 # Kill previous node by removing it from the children list of its parent
                 for curchildi in range(len(curnode.children)):
                     curpoint = curnode.children[curchildi].point
-                    if curpoint.x == curnode.point.x and curpoint.y == curnode.point.y:
+                    if curpoint.x == prevpoint.x and curpoint.y == prevpoint.y:
                         curnode.children.pop(curchildi)
+
+                # Also remove node from tree list:
+                for curnodei in range(len(tree)):
+                    curpoint = tree[curnodei].point
+                    if curpoint.x == prevpoint.x and curpoint.y == prevpoint.y:
+                        tree.pop(curnodei)
 
                 # Make new RRT
                 self.newpath = True
+                self.robotPoint = p
+                self.robotNode = RRTNode(p)
                 return None
 
             else:
