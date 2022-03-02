@@ -309,7 +309,7 @@ def MapFromPath():
             visual.ShowSegments(planner.getPathSegments(goalNode))
         visual.ShowBot(robot)
         visual.ShowFigure()
-        input("okay")
+        input("Step")
         visual.ClearFigure()
 
 
