@@ -174,6 +174,7 @@ class Robot():
                         closestWallSegPos = segPos
 
         # all walls processed
+        # print(closestWall)
         if (closestWall == -1):
             print("No wall!")
             # no wall found!
@@ -182,8 +183,10 @@ class Robot():
             print("Wall at", closestWall)
             # Hit a wall!!
             # update map
+            print(Segment(Point(closestWall[0][0], closestWall[0][1]),
+                           Point(closestWall[1][0], closestWall[1][1]), 1))
             self.map.addSegment(Point(closestWall[0][0], closestWall[0][1]),
-                           Point(closestWall[1][0], closestWall[0][1]), 1)
+                           Point(closestWall[1][0], closestWall[1][1]), 1)
 
             # back away from intersection by a little
             # TODO: BACK AWAY FROM THE SEGMENT BY A little
@@ -266,7 +269,7 @@ def TestVisualization():
 def MapFromPath():
     ## SETUP
     # create a world (walls)
-    walls = ((Point(4,  0), Point(4,  5)),
+    walls = ((Point(4,  0), Point(4,  6)),
              (Point(4,  10), Point(9,  10)))
     # walls = ((Point(2,  4), Point(5,  9)),
     #          (Point(5,  9), Point(4,  4)),
@@ -305,6 +308,7 @@ def MapFromPath():
         # Create a path from goal to start
         goalNode = planner.update()
         visual.ShowNodes(planner.tree)
+        visual.ShowSegments(robotmap.segments)
         if (goalNode is not None):
             visual.ShowSegments(planner.getPathSegments(goalNode))
         visual.ShowBot(robot)

@@ -152,7 +152,11 @@ def WhereSegmentCrossSegment(sA, sB):
 
     # now we can safely calculate u
     u = num / denom
-    if (denom != 0 and u >= 0 and u <= 1):
+
+    t = (q[0] - p[0], q[1] - p[1])
+    t = (t[0]*s[1] - t[1]*s[0]) / denom
+
+    if (denom != 0 and u >= 0 and u <= 1 and t >= 0 and t <= 1):
         int = (q[0] + u*s[0], q[1] + u*s[1])
         return (int, -1)
 
@@ -274,12 +278,12 @@ def SegmentCrossRectangle(s, centerline, width):
     possible_pt2 = -1
     for i in ints:
         if (i == -1):
-            # print("No intersection")
+            print("No intersection")
             # not an intersection
             # need to check endpoints in rectangle
             continue
         elif (i[1] == -1):
-            # print("One Point Intersects")
+            print("One Point Intersects")
             # just intersects at one point
             if (pt1 == -1):
                 pt1 = i[0]
@@ -288,7 +292,7 @@ def SegmentCrossRectangle(s, centerline, width):
                 pt2 = i[0]
             continue
         else:
-            # print("Wall Parallel -- bad")
+            print("Wall Parallel -- bad")
             # parallel to one of the lines! Not ideal...
             # for now, just return line endpoints (TODO: fix)
             pt1 = i[0]

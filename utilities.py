@@ -20,9 +20,9 @@ import numpy as np
 Aggregates visualization of each aspect of the space (mapping segments, points,
 planning nodes, etc.).
 
-STORES: Min/max bounds in x and y directions, 
-        walls (list of (Point, Point) tuples), 
-        start (Point), 
+STORES: Min/max bounds in x and y directions,
+        walls (list of (Point, Point) tuples),
+        start (Point),
         goal (Point)
 '''
 class Visualization():
@@ -79,10 +79,10 @@ class Visualization():
     RETURNS: None
     '''
     def ShowWorld(self):
-        for wall in self.walls:
-            plt.plot([wall[0].x, wall[1].x],
-                     [wall[0].y, wall[1].y],
-                     'r', linewidth=3)
+        # for wall in self.walls:
+        #     plt.plot([wall[0].x, wall[1].x],
+        #              [wall[0].y, wall[1].y],
+        #              'r', linewidth=3)
         plt.plot(self.start.x, self.start.y, 'rx', markersize = 5)
         plt.plot(self.goal.x,  self.goal.y,  'gx', markersize = 5)
 
@@ -148,6 +148,9 @@ class Point:
     def __add__(self, o):
         return Point(self.x + o.x, self.y + o.y)
 
+    def __sub__(self, o):
+        return Point(self.x - o.x, self.y - o.y)
+
     def __eq__(self, o):
         return self.x == o.x and self.y == o.y
 
@@ -161,6 +164,9 @@ class Point:
 
     def getAngle(self, other):
         return np.arctan2(other.y - self.y, other.x - self.x)
+
+    def scale(self, alpha):
+        return Point(self.x * alpha, self.y * alpha)
 
 
 
@@ -177,6 +183,9 @@ class Segment:
         self.pt1  = pt1
         self.pt2  = pt2
         self.prob = prob
+
+    def __repr__(self):
+        return str(self.seg)
 
     def SetProb(self, prob):
         self.prob = prob
