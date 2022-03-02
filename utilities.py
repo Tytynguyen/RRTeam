@@ -68,7 +68,7 @@ class Visualization():
         for segment in segments:
             plt.plot([segment.pt1.x, segment.pt2.x],
                      [segment.pt1.y, segment.pt2.y],
-                     'k', linewidth=2,
+                     'b', linewidth=2,
                      alpha = segment.prob * (segment.prob > cutoff))
 
 

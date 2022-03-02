@@ -278,12 +278,12 @@ def SegmentCrossRectangle(s, centerline, width):
     possible_pt2 = -1
     for i in ints:
         if (i == -1):
-            print("No intersection")
+            # print("No intersection")
             # not an intersection
             # need to check endpoints in rectangle
             continue
         elif (i[1] == -1):
-            print("One Point Intersects")
+            # print("One Point Intersects")
             # just intersects at one point
             if (pt1 == -1):
                 pt1 = i[0]
@@ -292,7 +292,7 @@ def SegmentCrossRectangle(s, centerline, width):
                 pt2 = i[0]
             continue
         else:
-            print("Wall Parallel -- bad")
+            # print("Wall Parallel -- bad")
             # parallel to one of the lines! Not ideal...
             # for now, just return line endpoints (TODO: fix)
             pt1 = i[0]
@@ -303,26 +303,34 @@ def SegmentCrossRectangle(s, centerline, width):
         # check if other wall point has same cross product sign with rectangle edges.
         rectangle_edges = (srA, srB, srC, srD)
         for pt in s:
-            lastSign = 0
+            # check each endpoint of s
             inside = False
+            lastSign = 0
             for edge in rectangle_edges:
-                # create vector connecting to first point
-                vec = (s[0][0] - pt[0], s[0][1] - pt[1])
-                # vec = (pt, s[0])
-                # compute the cross product
-                sign = PlanarCross(pt, vec)
-                if (sign > 0 and lastSign < 0):
+                # check the cross product with each rectangle vector
+                # create vectors relative to the first point on the edge
+                recvec = (edge[1][0] - edge[0][0], edge[1][1] - edge[0][1])
+                svec = (pt[0] - edge[0][0], pt[1] - edge[0][1])
+
+                # cross product
+                sign = PlanarCross(recvec, svec)
+                print(sign)
+                # check if signs are all same
+                if (sign > 0 and lastSign < 0) or (sign < 0 and lastSign > 0):
                     # point is not inside the rectangle!
-                    # print("No points in rectangle")
+                    print("No points in rectangle")
                     inside = False
                     break
-                lastSign = sign
-                inside = True
+                else:
+                    lastSign = sign
+                    inside = True
 
             # add the point
             if (inside and pt1 == -1):
+                print("Wall")
                 pt1 = pt
             elif inside:
+                print("Wall")
                 pt2 = pt
                 break
 
