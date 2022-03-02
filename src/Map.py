@@ -21,14 +21,14 @@ Stores:
 class Map():
     ''' init()
     INPUTS:
-    xrange: [xmin, xmax] tuple with max/min x
-    yrange: [ymin, ymax] tuple with max/min y
+    xrange: [xmin, ymin] tuple with max/min x
+    yrange: [xmax, ymax] tuple with max/min y
     '''
-    def __init__(self, xrange, yrange):
+    def __init__(self, minpt, maxpt):
         # define class variables
         self.segments = [] # list of segments
-        self.xlim = xrange
-        self.ylim = yrange
+        self.xlim = (minpt[0], maxpt[0])
+        self.ylim = (minpt[1], maxpt[1])
 
         # add each wall as a segment
         self.segments.append(Segment(Point(xrange[0], yrange[0]),
@@ -255,8 +255,8 @@ def MapFromPath():
              (Point(2, 14), Point(9, 12)),
              (Point(2, 12), Point(2, 14)))
 
-    xlim = [0, 10]
-    ylim = [0, 15]
+    xlim = [0, 0]
+    ylim = [10, 15]
 
     # define starting postion
     pstart = Point(1, 1)
@@ -275,7 +275,7 @@ def MapFromPath():
     # create viz
 
     ## Main loop: loop until hit goal or get stuck
-    
+
 
 
 def main():
