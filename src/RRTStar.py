@@ -41,7 +41,7 @@ class Node:
         self.children = childrennodes
 
 
-def RRT(tree, goalpoint, Nmax, xmin, xmax, ymin, ymax):
+def RRT(tree, goalpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):
     """
     Generate a RRT for use in planning.
 
@@ -85,22 +85,22 @@ def RRT(tree, goalpoint, Nmax, xmin, xmax, ymin, ymax):
         nextnode = Node(nextpoint, nearnode, [])
         tree.append(nextnode)
 
-            # Check whether to attach (creating a new node).
-        if map.localPlanner(nearpoint, nextpoint):
+        # Check whether nearpoint connects to next generated point
+        if mapobj.localPlanner(nearpoint, nextpoint):
             nextnode = Node(nextpoint, nearnode, [])
             tree.append(nextnode)
 
             nearnode.children.append(nextnode)
 
             # Also try to connect the goal.
-            if map.localPlanner(nextpoint, goalpoint):
+            if mapobj.localPlanner(nextpoint, goalpoint):
                 goalnode = Node(goalpoint, nextnode)
                 tree.append(goalnode)
                 nextnode.children.append(goalnode)
 
                 return tree
 
-        # Check whether we should abort (tree has gotten too large).
+        # Abort if tree is too large
         if (len(tree) >= Nmax):
             return None
 
