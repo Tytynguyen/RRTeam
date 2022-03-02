@@ -71,6 +71,16 @@ class Visualization():
                      'k', linewidth=2,
                      alpha = segment.prob * (segment.prob > cutoff))
 
+
+    def ShowRRTSegments(self, segments, cutoff=0):
+        # Show the segments, with opacity determined by probability.
+        # Do not display segments with probabilities below the cutoff.
+        for segment in segments:
+         plt.plot([segment.pt1.x, segment.pt2.x],
+                  [segment.pt1.y, segment.pt2.y],
+                  'k', linewidth=1,
+                  alpha = segment.prob * (segment.prob > cutoff))
+
     '''
     Takes the list of existing walls (in (Point, Point) form) and displays them.
     Also takes start and goal states (in Point form) and displays crosses.

@@ -310,7 +310,7 @@ def MapFromPath():
         visual.ShowNodes(planner.tree)
         visual.ShowSegments(robotmap.segments)
         if (goalNode is not None):
-            visual.ShowSegments(planner.getPathSegments(goalNode))
+            visual.ShowRRTSegments(planner.getPathSegments(goalNode))
         visual.ShowBot(robot)
         visual.ShowFigure()
         input("Step")
