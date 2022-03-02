@@ -215,32 +215,37 @@ def FinalPosition(centerline, p1, p2):
     if (dx == 0):
         # the line is vertical. Look for a horizontal line
         if (abs(p1[1] - pt1[1]) > abs(p2[1] - pt1[1])):
-            return [pt1[0], p1[1]]
+            return (pt1[0], p1[1])
         else:
-            return [pt1[0], p2[1]]
+            return (pt1[0], p2[1])
 
     if (dy == 0):
         # the line is horizontal. Look for a vertical line
         if (abs(p1[0] - pt1[0]) > abs(p2[0] - pt1[0])):
-            return [p1[0], pt1[1]]
+            return (p1[0], pt1[1])
         else:
-            return [p2[0], pt1[1]]
+            return (p2[0], pt1[1])
 
-    # line is not vertical. Get perpendicular slope (TODO: FIX!!)
+    # line is not vertical. Get perpendicular slope
+    slope = dy/dx
     perpslope = -dx/dy
 
-    # compute offsets relative to pt1 or pt2
-    xAoffset = np.sqrt(width*width / (1 + perpslope*perpslope))
-    yAoffset = perpslope*xAoffset
+    # compute offsets relative to start of centerline
+    xAoffset1 = (p1[1] - perpslope*p1[0]) / (slope - perpslope)
+    yAoffset1 = slope*xAoffset1
 
-    # Add the position of pt1 to get xAs
-    ptA1 = (pt1[0] - xAoffset, pt1[1] - yAoffset)
-    ptA2 = (pt1[0] + xAoffset, pt1[1] + yAoffset)
-    # Add the position of pt1 to get xAs
-    ptB1 = (pt2[0] - xAoffset, pt2[1] - yAoffset)
-    ptB2 = (pt2[0] + xAoffset, pt2[1] + yAoffset)
+    xAoffset2 = (p2[1] - perpslope*p2[0]) / (slope - perpslope)
+    yAoffset2 = slope*xAoffset2
 
-    return ((ptA1, ptA2), (ptA2, ptB2), (ptB2, ptB1), (ptB1, ptA1))
+    # check which is larger
+    d1 = np.sqrt(xAoffset1*xAoffset1 + yAoffset1*yAoffset1)
+    d2 = np.sqrt(xAoffset2*xAoffset2 + yAoffset2*yAoffset2)
+    if (d1 > d2):
+        # pick the first point
+        return (pt1[0] + xAoffset2, pt1[1] + yAoffset2)
+    else:
+        # pick the second point
+        return (pt1[0] + xAoffset1, pt1[1] + yAoffset1)
 
 def PlanarCross(pt1, pt2):
     return pt1[0]*pt2[1] - pt1[1]*pt2[0]
@@ -309,8 +314,7 @@ def SegmentCrossRectangle(s, centerline, width):
                 pt2 = pt
                 break
 
-
-    # TODO: compute distance along centerline to wall (if relevant)
+    # compute distance along centerline to travel
     if (pt2 == -1):
         # there's no wall, go to final position
         segpos = centerline[1]
