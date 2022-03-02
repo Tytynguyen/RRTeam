@@ -125,7 +125,7 @@ class Visualization():
     def ShowNodes(self, nodes):
         for node in nodes:
             # Points associated with RRT nodes are cyan
-            ShowPoint(node.point, 'co')
+            self.ShowPoint(node.point, 'co')
 
     '''
     Shows the plot

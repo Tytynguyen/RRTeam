@@ -25,6 +25,7 @@ import random
 import numpy as np
 from planarutils import *
 from utilities import *
+from Map import *
 
 dstep = 5
 deadreckoning = 0.05
@@ -35,7 +36,7 @@ class RRTNode:
     """
     Tree node class that stores parent information and the point vector
     """
-    def __init__(self, point, parentnode, childrennodes):
+    def __init__(self, point, parentnode, childrennodes=[]):
         self.point = point
         self.parent = parentnode
         self.children = childrennodes
@@ -75,6 +76,7 @@ def RRT(tree, goalpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):
         # Find the nearest node TODO: Make this more efficient...
         list = [(node.point.dist(targetpoint), node) for node in tree]
         (d2, nearnode)  = min(list)
+
         nearpoint = nearnode.point
 
         # Determine the next point, a step size (dstep) away.
@@ -82,15 +84,17 @@ def RRT(tree, goalpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):
         nx = dstep*np.cos(t) + nearpoint.x
         ny = dstep*np.sin(t) + nearpoint.y
         nextpoint = Point(nx, ny)
-        nextnode = RRTNode(nextpoint, nearnode, [])
+        nextnode = RRTNode(nextpoint, nearnode)
         tree.append(nextnode)
 
         # Check whether nearpoint connects to next generated point
         if mapobj.localPlanner(nearpoint, nextpoint):
-            nextnode = RRTNode(nextpoint, nearnode, [])
             tree.append(nextnode)
 
-            nearnode.children.append(nextnode)
+            if nearnode.children is None:
+                nearnode.children = [nextnode]
+            else:
+                nearnode.children.append(nextnode)
 
             # Also try to connect the goal.
             if mapobj.localPlanner(nextpoint, goalpoint):
@@ -136,6 +140,7 @@ def getPoints(tree, list=[]):
 
     return list
 
+#TODO: Make start and goal into points
 def TStar(startnode, goalnode, map, robot):
     """
     Run TStar given a start node and end node, using RRT to generate a tree.
@@ -169,3 +174,61 @@ def TStar(startnode, goalnode, map, robot):
 
         else:
             return path
+
+def TestVisualization():
+    # Generate example world with walls
+    walls = ((Point(2,  4), Point(5,  9)),
+             (Point(5,  9), Point(4,  4)),
+             (Point(4,  4), Point(2,  4)),
+             (Point(2, 12), Point(9, 12)),
+             (Point(2, 14), Point(9, 12)),
+             (Point(2, 12), Point(2, 14)))
+
+    start = Point(1, 1)
+    goal  = Point(9, 14)
+    minPt = (0, 0)   # (xmin, ymin)
+    maxPt = (10, 15) # (xmax, ymax)
+    mapobj = Map(minPt, maxPt)
+
+    # Gimme some test segments to visualize.
+    points = (Point(2, 4), Point(4, 4), Point(8, 12), Point(5, 9))
+    segments = (Segment(points[0], points[1], 0.46),
+                Segment(points[1], points[2], 0.63),
+                Segment(points[0], points[2], 0.20),
+                Segment(points[3], points[2], 0.83),
+                Segment(points[1], points[3], 1))
+
+    visual = Visualization(walls, start, goal, (10, 15))
+
+    visual.ShowWorld()
+    visual.ShowBot(start, 0)
+    visual.ShowPoints(points)
+    visual.ShowSegments(segments)
+    visual.ShowFigure()
+    input("ProbSegment test displayed. (hit return to continue)")
+    visual.ClearFigure()
+    visual.ShowFigure()
+    input("World cleared. (hit return to continue)")
+
+    # TEST RRT
+    # Start the tree with start state and no parent
+    # execute the search
+    tree = [RRTNode(start, None, None)]
+    tree = RRT(tree, goal, Nmax, minPt[0], minPt[1], maxPt[0], maxPt[1], mapobj) # TODO try to reduce arguments to RRT to maxPt, minPt form
+
+    if tree is None:
+        print("UNABLE TO FIND A PATH in %d steps", Nmax)
+        input("(hit return to exit)")
+        return
+
+    # Show the path.
+    visual.ShowNodes(tree)
+    print("PATH found after ", len(tree), " samples.")
+    input("(hit return to exit)")
+    return
+
+def main():
+    TestVisualization()
+
+if __name__== "__main__":
+    main()
