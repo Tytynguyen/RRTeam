@@ -152,7 +152,7 @@ class Robot():
         for wall in self.walls:
             # TODO: implement SegmentCrossRectangle
             wallseg = Segment(wall[0], wall[1])
-            print("Wall: ", wall)
+            # print("Wall: ", wall)
             (i1, i2, segPos) = SegmentCrossRectangle(wallseg.seg, path.seg, ROBOT_WIDTH / 2)
             if (i1 == -1):
                 # no collision
@@ -165,7 +165,6 @@ class Robot():
                     closestWall = (i1, i2)
                     closestWallDist = i1pt.dist(self.pos)
                     closestWallSegPos = segPos
-                    print("Closest ^")
                 else:
                     d = i1pt.dist(self.pos)
                     if (d < closestWallDist):
@@ -173,7 +172,6 @@ class Robot():
                         closestWall = (i1, i2)
                         closestWallDist = d
                         closestWallSegPos = segPos
-                        print("Closest ^")
 
         # all walls processed
         if (closestWall == -1):
@@ -184,8 +182,8 @@ class Robot():
             print("Wall at", closestWall)
             # Hit a wall!!
             # update map
-            self.map.addSegment(Point(closestWall[0], closestWall[1]),
-                           Point(closestWall[0], closestWall[1]), 1)
+            self.map.addSegment(Point(closestWall[0][0], closestWall[0][1]),
+                           Point(closestWall[1][0], closestWall[0][1]), 1)
 
             # back away from intersection by a little
             # TODO: BACK AWAY FROM THE SEGMENT BY A little
