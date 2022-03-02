@@ -232,10 +232,12 @@ def FinalPosition(centerline, p1, p2):
     perpslope = -dx/dy
 
     # compute offsets relative to start of centerline
-    xAoffset1 = (p1[1] - perpslope*p1[0]) / (slope - perpslope)
+    p1rel = (p1[0] - pt1[0], p1[1] - pt1[1])
+    xAoffset1 = (perpslope*p1rel[0] - p1rel[1]) / (perpslope - slope)
     yAoffset1 = slope*xAoffset1
 
-    xAoffset2 = (p2[1] - perpslope*p2[0]) / (slope - perpslope)
+    p2rel = (p2[0] - pt2[0], p2[1] - pt2[1])
+    xAoffset2 = (p2rel[1] - perpslope*p2rel[0]) / (slope - perpslope)
     yAoffset2 = slope*xAoffset2
 
     # check which is larger -- pick smaller
