@@ -42,7 +42,8 @@ class RRTNode:
 
 
 class RRTStar:
-    def __init__(self, startPt, goalPt, robot, map, minpt, maxpt):
+
+    def __init__(self, startPt, goalPt, robot, map, minPt, maxPt):
         # define class variables
         self.startPoint = startPt
         self.startNode = RRTNode(startPt)
@@ -50,8 +51,8 @@ class RRTStar:
         self.robot = robot
         self.map = map
         self.tree = RRTNode(self.goalPoint)
-        self.minpt = minpt
-        self.maxpt = maxpt
+        self.minPt = minPt
+        self.maxPt = maxPt
         self.newpath = False
 
         # class variables for viz
@@ -59,7 +60,7 @@ class RRTStar:
     # RETURN GOAL NODE
     def update(self):
         if self.newpath:
-            return  self.RRT(self.tree,self.goalPoint,Nmax,self.minpt[0],self.maxpt[0],self.minpt[1],self.maxpt[1],self.map)
+            return  self.RRT(self.tree,self.goalPoint,Nmax,self.minPt[0],self.maxPt[0],self.minPt[1],self.maxPt[1],self.map)
         else:
             return self.TStar(self.tree, self.robot)
 

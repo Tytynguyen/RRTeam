@@ -218,8 +218,8 @@ def TestVisualization():
                 Segment(points[1], points[3], 1))
 
     visual = Visualization(walls, start, goal, (10, 15))
-    
-    
+
+
     # create a map
     robotmap = Map(minPt, maxPt)
 
@@ -269,10 +269,9 @@ def MapFromPath():
     maxPt = [10, 15]
 
     # define starting postion
-    pstart = Point(1, 1)
-    tstart = 0
+    startPt = Point(1, 1)
     # define goal position
-    pgoal = Point(9, 9)
+    goalPt = Point(9, 9)
 
     # create a map
     robotmap = Map(minPt, maxPt)
@@ -280,18 +279,26 @@ def MapFromPath():
     # create a robot
     robot = Robot(walls, robotmap, Point(1, 1), 0)
 
+    # create RRT object
+    planner = RRTStar(startPt, goalPt, robot, robotmap, minPt, maxPt)
+
     # create viz
     visual = Visualization(walls, startPt, goalPt, maxPt)
 
     visual.ShowWorld()
     visual.ShowBot(robot)
     visual.ShowFigure()
-    input("World cleared. (hit return to continue)")
+    input("Initial world created. (hit return to continue)")
 
     ## Main loop: loop until hit goal or get stuck
     while True:
         # Create a path from goal to start
-        
+        goalNode = planner.update()
+        visual.ShowNodes(planner.tree)
+        if (goalNode is not None):
+            visual.ShowSegments(planner.getPathSegments(goalNode))
+        visual.showBot(robot)
+        visual.showFigure()
 
 
 def main():
