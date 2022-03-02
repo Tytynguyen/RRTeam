@@ -297,7 +297,8 @@ def SegmentCrossRectangle(s, centerline, width):
             inside = False
             for edge in rectangle_edges:
                 # create vector connecting to first point
-                vec = (pt, s[0])
+                vec = (s[0][0] - pt[0], s[0][1] - pt[1])
+                # vec = (pt, s[0])
                 # compute the cross product
                 sign = PlanarCross(pt, vec)
                 if (sign > 0 and lastSign < 0):

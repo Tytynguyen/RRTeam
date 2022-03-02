@@ -63,11 +63,11 @@ class RRTStar:
         if self.newpath:
             goal = self.RRT(self.startPoint,Nmax,self.minPt[0],self.maxPt[0],self.minPt[1],self.maxPt[1],self.map)
             self.newpath = False
-            print(len(self.tree))
+            # print(len(self.tree))
 
             return goal
         else:
-            print(self.robot.pos)
+            # print(self.robot.pos)
             return self.TStar(self.tree, self.robot)
 
     def RRT(self, goalpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):

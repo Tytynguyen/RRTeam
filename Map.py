@@ -157,13 +157,15 @@ class Robot():
                 # no collision
                 continue
             else:
+                i1pt = Point(i1[0], i1[1])
+                i2pt = Point(i2[0], i2[1])
                 # check to see if this wall is closest
                 if closestWall == -1:
                     closestWall = (i1, i2)
-                    closestWallDist = getdist(i1, self.pos)
+                    closestWallDist = i1pt.dist(self.pos)
                     closestWallSegPos = segPos
                 else:
-                    d = getDist(i1, self.pos)
+                    d = i1pt.dist(self.pos)
                     if (d < closestWallDist):
                         # this intersection is closer, so this wall is the one that matters
                         closestWall = (i1, i2)
@@ -177,7 +179,7 @@ class Robot():
         else:
             # Hit a wall!!
             # update map
-            map.addSegment(Point(i1[0], i1[1]),
+            self.map.addSegment(Point(i1[0], i1[1]),
                            Point(i2[0], i2[1]), 1)
 
             # back away from intersection by a little
@@ -185,7 +187,8 @@ class Robot():
             # and double check that you aren't moving past the starting point
             # return that final position
             # (for now, just go to segment)
-            return closestWallSegPos
+            pt2 = Point(closestWallSegPos[0], closestWallSegPos[1])
+            return pt2
 
 
 
