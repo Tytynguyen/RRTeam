@@ -258,20 +258,22 @@ def MapFromPath():
              (Point(2, 14), Point(9, 12)),
              (Point(2, 12), Point(2, 14)))
 
-    startPt = [0, 0]
-    goalPt = [10, 15]
+    minPt = [0, 0]
+    maxPt = [10, 15]
 
     # define starting postion
-    pstart = Point(1, 1)
-    tstart = 0
+    startPt = Point(1, 1)
     # define goal position
-    pgoal = Point(9, 9)
+    goalPt = Point(9, 9)
 
     # create a map
     robotmap = Map(xlim, ylim)
 
     # create a robot
     robot = Robot(walls, robotmap, Point(1, 1), 0)
+
+    # create RRT object
+    planner = RRTStar(startPt, goalPt, robot, robotmap, minPt, maxPt)
 
     # create viz
     visual = Visualization(walls, startPt, goalPt, maxPt)
@@ -284,7 +286,7 @@ def MapFromPath():
     ## Main loop: loop until hit goal or get stuck
     while True:
         # Create a path from goal to start
-        
+
 
 
 def main():

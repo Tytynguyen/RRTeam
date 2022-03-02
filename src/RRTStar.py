@@ -42,7 +42,7 @@ class RRTNode:
 
 
 class RRTStar:
-    def __init__(self, startPt, goalPt, robot, map):
+    def __init__(self, startPt, goalPt, robot, map, minPt, maxPt):
         # define class variables
         self.startPoint = startPt
         self.goalPoint = goalPt
