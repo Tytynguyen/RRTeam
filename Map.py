@@ -10,7 +10,7 @@ from RRTStar import *
 ## GLOBAL CONSTANTS
 SENSOR_RANGE = 1 # in (x, y) units
 
-ROBOT_WIDTH = 0.5
+ROBOT_WIDTH = 0.01
 ## END GLOBAL CONSTANTS
 
 '''
@@ -152,6 +152,7 @@ class Robot():
         for wall in self.walls:
             # TODO: implement SegmentCrossRectangle
             wallseg = Segment(wall[0], wall[1])
+            print("Wall: ", wall)
             (i1, i2, segPos) = SegmentCrossRectangle(wallseg.seg, path.seg, ROBOT_WIDTH / 2)
             if (i1 == -1):
                 # no collision
@@ -164,6 +165,7 @@ class Robot():
                     closestWall = (i1, i2)
                     closestWallDist = i1pt.dist(self.pos)
                     closestWallSegPos = segPos
+                    print("Closest ^")
                 else:
                     d = i1pt.dist(self.pos)
                     if (d < closestWallDist):
@@ -171,16 +173,19 @@ class Robot():
                         closestWall = (i1, i2)
                         closestWallDist = d
                         closestWallSegPos = segPos
+                        print("Closest ^")
 
         # all walls processed
         if (closestWall == -1):
+            print("No wall!")
             # no wall found!
             return p2
         else:
+            print("Wall at", closestWall)
             # Hit a wall!!
             # update map
-            self.map.addSegment(Point(i1[0], i1[1]),
-                           Point(i2[0], i2[1]), 1)
+            self.map.addSegment(Point(closestWall[0], closestWall[1]),
+                           Point(closestWall[0], closestWall[1]), 1)
 
             # back away from intersection by a little
             # TODO: BACK AWAY FROM THE SEGMENT BY A little
@@ -188,6 +193,7 @@ class Robot():
             # return that final position
             # (for now, just go to segment)
             pt2 = Point(closestWallSegPos[0], closestWallSegPos[1])
+            print("Moving to", pt2)
             return pt2
 
 
@@ -262,12 +268,14 @@ def TestVisualization():
 def MapFromPath():
     ## SETUP
     # create a world (walls)
-    walls = ((Point(2,  4), Point(5,  9)),
-             (Point(5,  9), Point(4,  4)),
-             (Point(4,  4), Point(2,  4)),
-             (Point(2, 12), Point(9, 12)),
-             (Point(2, 14), Point(9, 12)),
-             (Point(2, 12), Point(2, 14)))
+    walls = ((Point(4,  0), Point(4,  9)),
+             (Point(4,  7), Point(9,  7)))
+    # walls = ((Point(2,  4), Point(5,  9)),
+    #          (Point(5,  9), Point(4,  4)),
+    #          (Point(4,  4), Point(2,  4)),
+    #          (Point(2, 12), Point(9, 12)),
+    #          (Point(2, 14), Point(9, 12)),
+    #          (Point(2, 12), Point(2, 14)))
 
     minPt = [0, 0]
     maxPt = [10, 15]
@@ -275,7 +283,7 @@ def MapFromPath():
     # define starting postion
     startPt = Point(1, 1)
     # define goal position
-    goalPt = Point(9, 9)
+    goalPt = Point(8, 4)
 
     # create a map
     robotmap = Map(minPt, maxPt)

@@ -107,7 +107,7 @@ def WhereSegmentCrossSegment(sA, sB):
     # (r x s)
     denom = r[0]*s[1] - r[1]*s[0]
 
-    ## Cases
+    ## Cases (TODO: UPDATE TO CONSIDER ENDPOINTS)
     if (num == 0 and denom == 0):
         # two lines are colinear
         t0 = (q[0] - p[0])*r[0] + (q[1] - p[1])*r[1]
@@ -205,6 +205,7 @@ def SegmentsFromCenterline(centerline, width):
     return ((ptA1, ptA2), (ptA2, ptB2), (ptB2, ptB1), (ptB1, ptA1))
 
 def FinalPosition(centerline, p1, p2):
+    # TODO: FIX
     # pull out centerline points
     pt1 = centerline[0]
     pt2 = centerline[1]
@@ -237,14 +238,14 @@ def FinalPosition(centerline, p1, p2):
     xAoffset2 = (p2[1] - perpslope*p2[0]) / (slope - perpslope)
     yAoffset2 = slope*xAoffset2
 
-    # check which is larger
+    # check which is larger -- pick smaller
     d1 = np.sqrt(xAoffset1*xAoffset1 + yAoffset1*yAoffset1)
     d2 = np.sqrt(xAoffset2*xAoffset2 + yAoffset2*yAoffset2)
     if (d1 > d2):
-        # pick the first point
+        # pick the second point
         return (pt1[0] + xAoffset2, pt1[1] + yAoffset2)
     else:
-        # pick the second point
+        # pick the first point
         return (pt1[0] + xAoffset1, pt1[1] + yAoffset1)
 
 def PlanarCross(pt1, pt2):
@@ -264,6 +265,7 @@ def SegmentCrossRectangle(s, centerline, width):
     iC = WhereSegmentCrossSegment(s, srC)
     iD = WhereSegmentCrossSegment(s, srD)
     ints = [iA, iB, iC, iD]
+    print(ints)
 
     # a line cannot intersect more than two rectangle edges
     pt1 = -1
@@ -271,10 +273,12 @@ def SegmentCrossRectangle(s, centerline, width):
     possible_pt2 = -1
     for i in ints:
         if (i == -1):
+            print("No intersection")
             # not an intersection
             # need to check endpoints in rectangle
             continue
         elif (i[1] == -1):
+            print("One Point Intersects")
             # just intersects at one point
             if (pt1 == -1):
                 pt1 = i[0]
@@ -283,6 +287,7 @@ def SegmentCrossRectangle(s, centerline, width):
                 pt2 = i[0]
             continue
         else:
+            print("Wall Parallel -- bad")
             # parallel to one of the lines! Not ideal...
             # for now, just return line endpoints (TODO: fix)
             pt1 = i[0]
@@ -306,6 +311,7 @@ def SegmentCrossRectangle(s, centerline, width):
                     print("No points in rectangle")
                     inside = False
                     break
+                lastSign = sign
                 inside = True
 
             # add the point
