@@ -35,160 +35,161 @@ class RRTNode:
     """
     Tree node class that stores parent information and the point vector
     """
-    def __init__(self, point, parentnode, childrennodes=[]):
+    def __init__(self, point, parentnode=[], childrennodes=[]):
         self.point = point
         self.parent = parentnode
         self.children = childrennodes
 
 
 class RRTStar:
-    def __init__(self, startPt, goalPt, robot, map):
+    def __init__(self, startPt, goalPt, robot, map, minpt, maxpt):
         # define class variables
         self.startPoint = startPt
+        self.startNode = RRTNode(startPt)
         self.goalPoint = goalPt
         self.robot = robot
         self.map = map
-        self.tree = ???
-        # TODO: add in xlim and ylim (map.xlim, map.ylim)
+        self.tree = RRTNode(self.goalPoint)
+        self.minpt = minpt
+        self.maxpt = maxpt
+        self.newpath = False
 
         # class variables for viz
 
     # RETURN GOAL NODE
     def update(self):
-        pass
-
-def RRT(tree, goalpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):
-    """
-    Generate a RRT for use in planning.
-
-    @param tree List of all tree nodes
-    @param startpoint Where tree should start growing from (The end goal)
-    @param goalpoint Where tree should attempt to grow to (The robot)
-    @param Nmax Maximum number of nodes in tree allowed
-    @param xmin
-    @param xmax
-    @param ymin
-    @param ymax
-
-    @return tree list of nodes
-    """
-    #TODO: Check if goal connects to start
-
-    # Loop.
-    while True:
-        # Determine the target point.
-        # Try directly towards the goal by deadreckoning some times, but otherwise
-        # Choose a uniformly random target
-        if random.uniform(0.0, 1.0) <= deadreckoning:
-            # Pick goal as target
-            targetpoint = goalpoint
+        if self.newpath:
+            return  self.RRT(self.tree,self.goalPoint,Nmax,self.minpt[0],self.maxpt[0],self.minpt[1],self.maxpt[1],self.map)
         else:
-            # Uniformly pick target
-            x = random.uniform(xmin, xmax)
-            y = random.uniform(ymin, ymax)
-            targetpoint = Point(x, y)
+            return self.TStar(self.tree, self.robot)
 
-        # Find the nearest node TODO: Make this more efficient...
-        list = [(node.point.dist(targetpoint), node) for node in tree]
-        (d2, nearnode)  = min(list)
+    def RRT(self, tree, goalpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):
+        """
+        Generate a RRT for use in planning.
 
-        nearpoint = nearnode.point
+        @param tree List of all tree nodes
+        @param startpoint Where tree should start growing from (The end goal)
+        @param goalpoint Where tree should attempt to grow to (The robot)
+        @param Nmax Maximum number of nodes in tree allowed
+        @param xmin
+        @param xmax
+        @param ymin
+        @param ymax
 
-        # Determine the next point, a step size (dstep) away.
-        t = np.arctan2((targetpoint.y - nearpoint.y), (targetpoint.x - nearpoint.x))
-        nx = dstep*np.cos(t) + nearpoint.x
-        ny = dstep*np.sin(t) + nearpoint.y
-        nextpoint = Point(nx, ny)
-        nextnode = RRTNode(nextpoint, nearnode)
-        tree.append(nextnode)
+        @return tree list of nodes
+        """
+        #TODO: Check if goal connects to start
 
-        # Check whether nearpoint connects to next generated point
-        if mapobj.localPlanner(nearpoint, nextpoint):
+        # Loop.
+        while True:
+            # Determine the target point.
+            # Try directly towards the goal by deadreckoning some times, but otherwise
+            # Choose a uniformly random target
+            if random.uniform(0.0, 1.0) <= deadreckoning:
+                # Pick goal as target
+                targetpoint = goalpoint
+            else:
+                # Uniformly pick target
+                x = random.uniform(xmin, xmax)
+                y = random.uniform(ymin, ymax)
+                targetpoint = Point(x, y)
+
+            # Find the nearest node TODO: Make this more efficient...
+            list = [(node.point.dist(targetpoint), node) for node in tree]
+            (d2, nearnode)  = min(list)
+
+            nearpoint = nearnode.point
+
+            # Determine the next point, a step size (dstep) away.
+            t = np.arctan2((targetpoint.y - nearpoint.y), (targetpoint.x - nearpoint.x))
+            nx = dstep*np.cos(t) + nearpoint.x
+            ny = dstep*np.sin(t) + nearpoint.y
+            nextpoint = Point(nx, ny)
+            nextnode = RRTNode(nextpoint, nearnode)
             tree.append(nextnode)
 
-            if nearnode.children is None:
-                nearnode.children = [nextnode]
+            # Check whether nearpoint connects to next generated point
+            if mapobj.localPlanner(nearpoint, nextpoint):
+                tree.append(nextnode)
+
+                if nearnode.children is None:
+                    nearnode.children = [nextnode]
+                else:
+                    nearnode.children.append(nextnode)
+
+                # Also try to connect the goal.
+                if mapobj.localPlanner(nextpoint, goalpoint):
+                    goalnode = RRTNode(goalpoint, nextnode)
+                    tree.append(goalnode)
+                    nextnode.children.append(goalnode)
+
+                    return goalnode
+
+            # Abort if tree is too large
+            if (len(tree) >= Nmax):
+                return None
+
+
+    def getPathSegments(self, node):
+        """
+        Get the segments from the given node to the base of the tree
+        """
+        segments = []
+
+        while node.parent is not None:
+            segments.append(Segment(node.point, node.parent.point))
+            node = node.parent
+
+        return segments
+
+    def getPathNodes(self, node):
+        """
+        Get the nodes from the given node to the base of the tree
+        """
+        nodes = []
+
+        while node.parent is not None:
+            nodes.append(node)
+            node = node.parent
+
+        return nodes
+
+    def getPoints(self, tree, list=[]):
+        list.append(tree)
+        for child in tree.children:
+            getPoints(tree,list)
+
+        return list
+
+    def TStar(self, tree, robot):
+        """
+        Run TStar given a start node and end node, using RRT to generate a tree.
+        """
+        # Build initial tree
+        path = getPathNodes(tree[-1])  # Get the path from the start node to goal
+
+        for curnodei in range(len(path)):
+            curnode = path[curnodei]
+
+            # Fails to make it
+            if not robot.goto(curnode.point):
+                p = robot.pos
+                # Kill all children of previous node
+                prevnode = path[curnodei-1]
+                prevnode.children = []
+
+                # Kill previous node by removing it from the children list of its parent
+                for curchildi in range(len(curnode.children)):
+                    curpoint = curnode.children[curchildi].point
+                    if curpoint.x == curnode.point.x and curpoint.y == curnode.point.y:
+                        curnode.children.pop(curchildi)
+
+                # Make new RRT
+                self.newpath = True
+                return None
+
             else:
-                nearnode.children.append(nextnode)
-
-            # Also try to connect the goal.
-            if mapobj.localPlanner(nextpoint, goalpoint):
-                goalnode = RRTNode(goalpoint, nextnode)
-                tree.append(goalnode)
-                nextnode.children.append(goalnode)
-
-                return goalnode
-
-        # Abort if tree is too large
-        if (len(tree) >= Nmax):
-            return None
-
-
-def getPathSegments(node):
-    """
-    Get the segments from the given node to the base of the tree
-    """
-    segments = []
-
-    while node.parent is not None:
-        segments.append(Segment(node.point, node.parent.point))
-        node = node.parent
-
-    return segments
-
-def getPathNodes(node):
-    """
-    Get the nodes from the given node to the base of the tree
-    """
-    nodes = []
-
-    while node.parent is not None:
-        nodes.append(node)
-        node = node.parent
-
-    return nodes
-
-def getPoints(tree, list=[]):
-    list.append(tree)
-    for child in tree.children:
-        getPoints(tree,list)
-
-    return list
-
-#TODO: Make start and goal into points
-def TStar(startnode, goalnode, map, robot):
-    """
-    Run TStar given a start node and end node, using RRT to generate a tree.
-    """
-    # Build initial tree
-
-    Nmax = 1000
-    xmin = map.xlim[0]
-    xmax = map.xlim[1]
-    ymin = map.ylim[0]
-    ymax = map.ylim[1]
-    tree = RRT([goalnode], startnode, Nmax, xmin, xmax, ymin, ymax)
-
-    path = getPathNodes(tree[-1])  # Get the path from the start node to goal
-
-    for curnodei in range(len(path)):
-        curnode = path[curnodei]
-
-        # Fails to make it
-        if not robot.goto(curnode.point):
-            p = robot.pos
-            # Kill all children of previous node
-            prevnode = path[curnodei-1]
-            prevnode.children = []
-
-            # Kill previous node by removing it from the children list of its parent
-            for curchildi in range(len(curnode.children)):
-                curpoint = curnode.children[curchildi].point
-                if curpoint.x == curnode.point.x and curpoint.y == curnode.point.y:
-                    curnode.children.pop(curchildi)
-
-        else:
-            return path
+                return path
 
 def TestVisualization():
     # Generate example world with walls
