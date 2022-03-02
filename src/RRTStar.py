@@ -31,7 +31,7 @@ deadreckoning = 0.05
 Nmax = 1000
 
 
-class Node:
+class RRTNode:
     """
     Tree node class that stores parent information and the point vector
     """
@@ -82,19 +82,19 @@ def RRT(tree, goalpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):
         nx = dstep*np.cos(t) + nearpoint.x
         ny = dstep*np.sin(t) + nearpoint.y
         nextpoint = Point(nx, ny)
-        nextnode = Node(nextpoint, nearnode, [])
+        nextnode = RRTNode(nextpoint, nearnode, [])
         tree.append(nextnode)
 
         # Check whether nearpoint connects to next generated point
         if mapobj.localPlanner(nearpoint, nextpoint):
-            nextnode = Node(nextpoint, nearnode, [])
+            nextnode = RRTNode(nextpoint, nearnode, [])
             tree.append(nextnode)
 
             nearnode.children.append(nextnode)
 
             # Also try to connect the goal.
             if mapobj.localPlanner(nextpoint, goalpoint):
-                goalnode = Node(goalpoint, nextnode)
+                goalnode = RRTNode(goalpoint, nextnode)
                 tree.append(goalnode)
                 nextnode.children.append(goalnode)
 
@@ -169,14 +169,3 @@ def TStar(startnode, goalnode, map, robot):
 
         else:
             return path
-
-
-
-
-
-
-
-
-
-
-

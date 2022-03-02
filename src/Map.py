@@ -189,7 +189,7 @@ class Robot():
 
 
 '''
-Runs an example visualization process that generates fake outputs from a 
+Runs an example visualization process that generates fake outputs from a
 planning program in order to use each of the visualization functions.
 
 RETURNS: None
@@ -215,9 +215,9 @@ def TestVisualization():
                 Segment(points[0], points[2], 0.20),
                 Segment(points[3], points[2], 0.83),
                 Segment(points[1], points[3], 1))
-    
+
     visual = Visualization(walls, start, goal, (10, 15))
-    
+
     visual.ShowWorld()
     visual.ShowBot(start, 0)
     visual.ShowPoints(points)
@@ -231,14 +231,14 @@ def TestVisualization():
     # TEST RRT
     # Start the tree with start state and no parent
     # execute the search
-    tree = [Node(start, None, None)]
+    tree = [RRTNode(start, None, None)]
     tree = RRT(tree, goal, Nmax, minPt[0], minPt[1], maxPt[0], maxPt[1]) # TODO try to reduce arguments to RRT to maxPt, minPt form
 
     if tree is None:
         print("UNABLE TO FIND A PATH in %d steps", Nmax)
         input("(hit return to exit)")
         return
-    
+
     # Show the path.
     visual.ShowNodes(tree)
     print("PATH found after ", len(tree), " samples.")
