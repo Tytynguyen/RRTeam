@@ -218,9 +218,16 @@ def TestVisualization():
                 Segment(points[1], points[3], 1))
 
     visual = Visualization(walls, start, goal, (10, 15))
+    
+    
+    # create a map
+    robotmap = Map(minPt, maxPt)
+
+    # create a robot
+    robot = Robot(walls, robotmap, Point(1, 1), 0)
 
     visual.ShowWorld()
-    visual.ShowBot(start, 0)
+    visual.ShowBot(robot)
     visual.ShowPoints(points)
     visual.ShowSegments(segments)
     visual.ShowFigure()
@@ -258,8 +265,8 @@ def MapFromPath():
              (Point(2, 14), Point(9, 12)),
              (Point(2, 12), Point(2, 14)))
 
-    xlim = [0, 0]
-    ylim = [10, 15]
+    minPt = [0, 0]
+    maxPt = [10, 15]
 
     # define starting postion
     pstart = Point(1, 1)
@@ -268,7 +275,7 @@ def MapFromPath():
     pgoal = Point(9, 9)
 
     # create a map
-    robotmap = Map(xlim, ylim)
+    robotmap = Map(minPt, maxPt)
 
     # create a robot
     robot = Robot(walls, robotmap, Point(1, 1), 0)
