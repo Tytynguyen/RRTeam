@@ -25,7 +25,6 @@ import random
 import numpy as np
 from planarutils import *
 from utilities import *
-from Map import *
 
 dstep = 5
 deadreckoning = 0.05
@@ -102,7 +101,7 @@ def RRT(tree, goalpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):
                 tree.append(goalnode)
                 nextnode.children.append(goalnode)
 
-                return tree
+                return goalnode
 
         # Abort if tree is too large
         if (len(tree) >= Nmax):
@@ -116,7 +115,7 @@ def getPathSegments(node):
     segments = []
 
     while node.parent is not None:
-        segments.append(Segment(node, node.parent))
+        segments.append(Segment(node.point, node.parent.point))
         node = node.parent
 
     return segments

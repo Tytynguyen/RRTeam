@@ -15,7 +15,6 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-from RRTStar import *
 
 '''
 Aggregates visualization of each aspect of the space (mapping segments, points,
@@ -27,7 +26,7 @@ STORES: Min/max bounds in x and y directions,
         goal (Point)
 '''
 class Visualization():
-    def __init__(self, walls, start, goal, maxPt, minPt = (0, 0), ):
+    def __init__(self, walls, start, goal, maxPt, minPt = (0, 0)):
         # Clear and show.
         self.min      = minPt
         self.max      = maxPt
@@ -160,7 +159,7 @@ class Point:
     def getAngle(self, other):
         return np.atan2(p2[1] - p1[1], p2[0] - p1[0])
 
-#
+
 '''
 The special Segment class carries a probability and is used only for mapping
 predicted segments. Walls are represented as pairs of points.

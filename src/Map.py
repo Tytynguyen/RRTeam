@@ -31,17 +31,17 @@ class Map():
         self.ylim = (minpt[1], maxpt[1])
 
         # add each wall as a segment
-        self.segments.append(Segment(Point(xrange[0], yrange[0]),
-                                     Point(xrange[1], yrange[0]), 1)) # lower wall
+        self.segments.append(Segment(Point(self.xlim[0], self.ylim[0]),
+                                     Point(self.xlim[1], self.ylim[0]), 1)) # lower wall
 
-        self.segments.append(Segment(Point(xrange[1], yrange[0]),
-                                     Point(xrange[1], yrange[1]), 1)) # right wall
+        self.segments.append(Segment(Point(self.xlim[1], self.ylim[0]),
+                                     Point(self.xlim[1], self.ylim[1]), 1)) # right wall
 
-        self.segments.append(Segment(Point(xrange[1], yrange[1]),
-                                     Point(xrange[0], yrange[1]), 1)) # top wall
+        self.segments.append(Segment(Point(self.xlim[1], self.ylim[1]),
+                                     Point(self.xlim[0], self.ylim[1]), 1)) # top wall
 
-        self.segments.append(Segment(Point(xrange[1], yrange[1]),
-                                     Point(xrange[0], yrange[1]), 1)) # left wall
+        self.segments.append(Segment(Point(self.xlim[1], self.ylim[1]),
+                                     Point(self.xlim[0], self.ylim[1]), 1)) # left wall
 
     ''' addSegment()
     INPUTS:
@@ -207,6 +207,7 @@ def TestVisualization():
     goal  = Point(9, 14)
     minPt = (0, 0)   # (xmin, ymin)
     maxPt = (10, 15) # (xmax, ymax)
+    mapobj = Map(minPt, maxPt)
 
     # Gimme some test segments to visualize.
     points = (Point(2, 4), Point(4, 4), Point(8, 12), Point(5, 9))
@@ -232,7 +233,7 @@ def TestVisualization():
     # Start the tree with start state and no parent
     # execute the search
     tree = [RRTNode(start, None, None)]
-    tree = RRT(tree, goal, Nmax, minPt[0], minPt[1], maxPt[0], maxPt[1]) # TODO try to reduce arguments to RRT to maxPt, minPt form
+    goalnode = RRT(tree, goal, Nmax, minPt[0], minPt[1], maxPt[0], maxPt[1], mapobj) # TODO try to reduce arguments to RRT to maxPt, minPt form
 
     if tree is None:
         print("UNABLE TO FIND A PATH in %d steps", Nmax)
@@ -241,6 +242,8 @@ def TestVisualization():
 
     # Show the path.
     visual.ShowNodes(tree)
+    visual.ShowSegments(getPathSegments(goalnode))
+    visual.ShowFigure()
     print("PATH found after ", len(tree), " samples.")
     input("(hit return to exit)")
     return
@@ -279,9 +282,9 @@ def MapFromPath():
 
 
 def main():
-    # TestVisualization()
+    TestVisualization()
 
-    MapFromPath()
+    # MapFromPath()
 
 if __name__== "__main__":
     main()
