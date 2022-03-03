@@ -89,10 +89,10 @@ class Visualization():
     RETURNS: None
     '''
     def ShowWorld(self):
-        # for wall in self.walls:
-        #     plt.plot([wall[0].x, wall[1].x],
-        #              [wall[0].y, wall[1].y],
-        #              'r', linewidth=3)
+        for wall in self.walls:
+            plt.plot([wall[0].x, wall[1].x],
+                     [wall[0].y, wall[1].y],
+                     'r--', linewidth=1)
         plt.plot(self.start.x, self.start.y, 'rx', markersize = 5)
         plt.plot(self.goal.x,  self.goal.y,  'gx', markersize = 5)
 
