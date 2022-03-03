@@ -194,7 +194,7 @@ class RRTStar:
         """
         # Build initial tree
         path = self.getPathNodes(self.robotNode)  # Get the path from the start node to goal
-
+        path.append(self.tree[0])
         for curnodei in range(1,len(path)):
             curnode = path[curnodei]
 
