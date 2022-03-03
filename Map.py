@@ -269,7 +269,7 @@ def TestVisualization():
 def MapFromPath():
     ## SETUP
     # create a world (walls)
-    walls = ((Point(4,  5), Point(4,  6)),
+    walls = ((Point(4,  0), Point(4,  6)),
              (Point(4,  10), Point(9,  10)))
     # walls = ((Point(2,  4), Point(5,  9)),
     #          (Point(5,  9), Point(4,  4)),
@@ -313,6 +313,10 @@ def MapFromPath():
             visual.ShowRRTSegments(planner.getPathSegments(goalNode))
         visual.ShowBot(robot)
         visual.ShowFigure()
+
+        if (robot.pos == goalPt):
+            input("Made it!")
+            break
         input("Step")
         visual.ClearFigure()
 
