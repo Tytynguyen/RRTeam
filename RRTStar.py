@@ -215,6 +215,7 @@ class RRTStar:
                     curpoint = curnode.children[curchildi].point
                     if curpoint.x == prevpoint.x and curpoint.y == prevpoint.y:
                         curnode.children.pop(curchildi)
+                        break
 
                 numdel = 0
                 # Also remove node from tree list:
