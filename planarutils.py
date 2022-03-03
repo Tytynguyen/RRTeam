@@ -314,11 +314,10 @@ def SegmentCrossRectangle(s, centerline, width):
 
                 # cross product
                 sign = PlanarCross(recvec, svec)
-                print(sign)
                 # check if signs are all same
                 if (sign > 0 and lastSign < 0) or (sign < 0 and lastSign > 0):
                     # point is not inside the rectangle!
-                    print("No points in rectangle")
+                    # print("No points in rectangle")
                     inside = False
                     break
                 else:
@@ -327,10 +326,8 @@ def SegmentCrossRectangle(s, centerline, width):
 
             # add the point
             if (inside and pt1 == -1):
-                print("Wall")
                 pt1 = pt
             elif inside:
-                print("Wall")
                 pt2 = pt
                 break
 
