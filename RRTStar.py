@@ -184,7 +184,7 @@ class RRTStar:
     def getPoints(self, tree, list=[]):
         list.append(tree)
         for child in tree.children:
-            getPoints(tree,list)
+            self.getPoints(tree,list)
 
         return list
 
@@ -232,7 +232,7 @@ class RRTStar:
                 return None
 
             else:
-                return path
+                return None
 
 def TestVisualization():
     # Generate example world with walls
