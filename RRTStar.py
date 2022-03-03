@@ -147,13 +147,47 @@ class RRTStar:
                         nextnode.children = [robotnode]
                     else:
                         nextnode.children.append(robotnode)
+
                     self.robotNode = robotnode
+
                     return robotnode
 
             # Abort if tree is too large
             if (len(self.tree) >= Nmax):
                 return None
 
+
+    def TStar(self, robot):
+        """
+        Run TStar given a start node and end node, using RRT to generate a tree.
+        """
+        # Build initial tree
+
+        if self.robotNode.point == self.goalPoint:
+            return self.robotNode
+
+        path = self.getPathNodes(self.robotNode)  # Get the path from the start node to goal
+        path.append(self.tree[0])
+        curnode = path[1]
+
+        # Fails to make it
+        if not robot.goto(curnode.point):
+            p = robot.pos
+
+            # Kill previous node, no longer can get there
+            self.killNode(path[0])
+
+            # Make new RRT
+            self.robotNode = RRTNode(p)
+            self.robotPoint = p
+            self.newpath = True
+            return self.robotNode
+        else:
+            p = robot.pos
+            self.robotNode = RRTNode(p,curnode.parent)
+            self.robotPoint = p
+            self.newpath = False
+            return self.robotNode
 
     def getPathSegments(self, node):
         """
@@ -181,11 +215,11 @@ class RRTStar:
     def getPoints(self, tree, list=[]):
         list.append(tree)
         for child in tree.children:
-            self.getPoints(tree,list)
+            self.getPoints(tree, list)
 
         return list
 
-    def killNode(self,node):
+    def killNode(self, node):
         # Kill node by removing it from the children list of its parent
         parent = node.parent
         for curchildi in range(len(parent.children)):
@@ -200,33 +234,3 @@ class RRTStar:
             if curpoint == node.point:
                 self.tree.pop(curnodei)
                 break
-
-
-    def TStar(self, robot):
-        """
-        Run TStar given a start node and end node, using RRT to generate a tree.
-        """
-        # Build initial tree
-        path = self.getPathNodes(self.robotNode)  # Get the path from the start node to goal
-        path.append(self.tree[0])
-
-        curnode = path[1]
-
-        # Fails to make it
-        if not robot.goto(curnode.point):
-            p = robot.pos
-
-            # Kill previous node, no longer can get there
-            self.killNode(path[0])
-
-            # Make new RRT
-            self.robotNode = RRTNode(p)
-            self.robotPoint = p
-            self.newpath = True
-            return None
-        else:
-            p = robot.pos
-            self.robotNode = curnode
-            self.robotPoint = p
-            self.newpath = False
-            return self.robotNode
