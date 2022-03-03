@@ -118,7 +118,7 @@ class Robot():
         ## Move towards our point!
         # also handles collision checking and map updating
         self.pos = self.distSensor(p2)
-        return
+        return True
 
 
 
@@ -180,11 +180,10 @@ class Robot():
             # no wall found!
             return p2
         else:
-            print("Wall at", closestWall)
+            print("Wall at", Segment(Point(closestWall[0][0], closestWall[0][1]),
+                           Point(closestWall[1][0], closestWall[1][1]), 1))
             # Hit a wall!!
             # update map
-            print(Segment(Point(closestWall[0][0], closestWall[0][1]),
-                           Point(closestWall[1][0], closestWall[1][1]), 1))
             self.map.addSegment(Point(closestWall[0][0], closestWall[0][1]),
                            Point(closestWall[1][0], closestWall[1][1]), 1)
 
@@ -304,6 +303,7 @@ def MapFromPath():
     input("Initial world created. (hit return to continue)")
 
     ## Main loop: loop until hit goal or get stuck
+    stepCounter = 0
     while True:
         # Create a path from goal to start
         goalNode = planner.update()
@@ -317,7 +317,9 @@ def MapFromPath():
         if (robot.pos == goalPt):
             input("Made it!")
             break
-        #input("Step")
+        input("Step")
+        print("--",stepCounter,"--")
+        stepCounter += 1
         visual.ClearFigure()
 
 
