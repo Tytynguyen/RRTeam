@@ -314,6 +314,9 @@ def MapFromPath():
         visual.ShowSegments(robotmap.segments)
         if (goalNode is not None):
             visual.ShowRRTSegments(planner.getPathSegments(goalNode))
+        else:
+            input("Planning failed, try changing dstep or Nmax")
+            break
         visual.ShowBot(robot)
         visual.ShowFigure()
 

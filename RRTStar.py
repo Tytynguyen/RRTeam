@@ -63,6 +63,10 @@ class RRTStar:
     def update(self):
         if self.newpath:
             robotNode = self.RRT(self.robotPoint,Nmax,self.minPt[0],self.maxPt[0],self.minPt[1],self.maxPt[1],self.map)
+
+            # If too many nodes, we fail
+            if robotNode is None:
+                return None
             self.newpath = False
             # print(len(self.tree))
 
@@ -162,9 +166,6 @@ class RRTStar:
         Run TStar given a start node and end node, using RRT to generate a tree.
         """
         # Build initial tree
-
-        if self.robotNode.point == self.goalPoint:
-            return self.robotNode
 
         path = self.getPathNodes(self.robotNode)  # Get the path from the start node to goal
         path.append(self.tree[0])
