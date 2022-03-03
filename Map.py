@@ -118,7 +118,10 @@ class Robot():
         ## Move towards our point!
         # also handles collision checking and map updating
         self.pos = self.distSensor(p2)
-        return True
+        if (self.pos == p2):
+            return True
+        else:
+            return False
 
 
 
@@ -317,7 +320,7 @@ def MapFromPath():
         if (robot.pos == goalPt):
             input("Made it!")
             break
-        input("Step")
+        # input("Step")
         print("--",stepCounter,"--")
         stepCounter += 1
         visual.ClearFigure()
