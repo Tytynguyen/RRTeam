@@ -271,14 +271,14 @@ def TestVisualization():
 def MapFromPath():
     ## SETUP
     # create a world (walls)
-    walls = ((Point(4,  0), Point(4,  6)),
-             (Point(4,  10), Point(9,  10)))
-    # walls = ((Point(2,  4), Point(5,  9)),
-    #          (Point(5,  9), Point(4,  4)),
-    #          (Point(4,  4), Point(2,  4)),
-    #          (Point(2, 12), Point(9, 12)),
-    #          (Point(2, 14), Point(9, 12)),
-    #          (Point(2, 12), Point(2, 14)))
+    # walls = ((Point(4,  0), Point(4,  6)),
+    #          (Point(4,  10), Point(9,  10)))
+    walls = ((Point(2,  4), Point(5,  9)),
+             (Point(5,  9), Point(4,  4)),
+             (Point(4,  4), Point(2,  4)),
+             (Point(2, 12), Point(9, 12)),
+             (Point(2, 14), Point(9, 12)),
+             (Point(2, 12), Point(2, 14)))
 
     minPt = [0, 0]
     maxPt = [10, 15]
@@ -286,7 +286,7 @@ def MapFromPath():
     # define starting postion
     startPt = Point(1, 1)
     # define goal position
-    goalPt = Point(8, 4)
+    goalPt = Point(9, 14)
 
     # create a map
     robotmap = Map(minPt, maxPt)

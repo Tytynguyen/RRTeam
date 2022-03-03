@@ -26,7 +26,7 @@ import numpy as np
 from planarutils import *
 from utilities import *
 
-dstep = 0.5
+dstep = 1
 deadreckoning = 0.05
 Nmax = 1000
 
@@ -186,6 +186,7 @@ class RRTStar:
         else:
             p = robot.pos
             self.robotNode = RRTNode(p,curnode.parent)
+            self.killNode(path[0])
             self.robotPoint = p
             self.newpath = False
             return self.robotNode
