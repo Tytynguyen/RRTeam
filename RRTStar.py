@@ -102,11 +102,25 @@ class RRTStar:
                 y = random.uniform(ymin, ymax)
                 targetpoint = Point(x, y)
 
+
+
             # Find the nearest node TODO: Make this more efficient...
             list = [(node.point.dist(targetpoint), node) for node in self.tree]
             (d2, nearnode)  = min(list)
 
             nearpoint = nearnode.point
+
+            # Check if the node already connects...
+            if mapobj.localPlanner(nearpoint, robotpoint):
+                robotnode = RRTNode(robotpoint, nearnode)
+                self.tree.append(robotnode)
+
+                if nearnode.children is None:
+                    nearnode.children = [robotnode]
+                else:
+                    nearnode.children.append(robotnode)
+                self.robotNode = robotnode
+                return robotnode
 
             # Determine the next point, a step size (dstep) away.
             t = np.arctan2((targetpoint.y - nearpoint.y), (targetpoint.x - nearpoint.x))
