@@ -165,7 +165,7 @@ class Point:
         return self.x == o.x and self.y == o.y
 
     def __repr__(self):
-        return str((self.x,self.y))
+        return str((round(self.x,2),round(self.y,2)))
 
 
     # Report distance to another poimt (Euclidean)
@@ -195,7 +195,7 @@ class Segment:
         self.prob = prob
 
     def __repr__(self):
-        return str(self.seg)
+        return "(" + str(self.pt1) + ", " + str(self.pt2) + ")"
 
     def SetProb(self, prob):
         self.prob = prob
