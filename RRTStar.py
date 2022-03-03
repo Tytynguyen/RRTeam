@@ -201,6 +201,11 @@ class RRTStar:
             # Fails to make it
             if not robot.goto(curnode.point):
                 p = robot.pos
+
+                # DONE!
+                if p == self.goalPoint:
+                    return None
+
                 # Kill previous node
                 prevnode = path[curnodei-1]
                 prevpoint = prevnode.point
@@ -211,11 +216,13 @@ class RRTStar:
                     if curpoint.x == prevpoint.x and curpoint.y == prevpoint.y:
                         curnode.children.pop(curchildi)
 
+                numdel = 0
                 # Also remove node from tree list:
                 for curnodei in range(len(tree)):
-                    curpoint = tree[curnodei].point
+                    curpoint = tree[curnodei-numdel].point
                     if curpoint.x == prevpoint.x and curpoint.y == prevpoint.y:
-                        tree.pop(curnodei)
+                        tree.pop(curnodei-numdel)
+                        numdel += 1
 
                 # Make new RRT
                 self.newpath = True

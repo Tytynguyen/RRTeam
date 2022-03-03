@@ -317,7 +317,7 @@ def MapFromPath():
         if (robot.pos == goalPt):
             input("Made it!")
             break
-        input("Step")
+        #input("Step")
         visual.ClearFigure()
 
 
