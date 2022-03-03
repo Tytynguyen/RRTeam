@@ -69,7 +69,7 @@ class RRTStar:
             return robotNode
         else:
             # print(self.robot.pos)
-            return self.TStar(self.tree, self.robot)
+            return self.TStar(self.robot)
 
     def RRT(self, robotpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):
         """
@@ -86,7 +86,6 @@ class RRTStar:
 
         @return tree list of nodes
         """
-        #TODO: Check if goal connects to start
 
         # Loop.
         while True:
@@ -101,7 +100,6 @@ class RRTStar:
                 x = random.uniform(xmin, xmax)
                 y = random.uniform(ymin, ymax)
                 targetpoint = Point(x, y)
-
 
 
             # Find the nearest node TODO: Make this more efficient...
@@ -166,7 +164,6 @@ class RRTStar:
         while node.parent is not None:
             segments.append(Segment(node.point, node.parent.point))
             node = node.parent
-
         return segments
 
     def getPathNodes(self, node):
@@ -188,106 +185,48 @@ class RRTStar:
 
         return list
 
-    def TStar(self, tree, robot):
+    def killNode(self,node):
+        # Kill node by removing it from the children list of its parent
+        parent = node.parent
+        for curchildi in range(len(parent.children)):
+            curpoint = parent.children[curchildi].point
+            if curpoint == node.point:
+                parent.children.pop(curchildi)
+                break
+
+        # Also remove node from tree list:
+        for curnodei in range(len(self.tree)):
+            curpoint = self.tree[curnodei].point
+            if curpoint == node.point:
+                self.tree.pop(curnodei)
+                break
+
+
+    def TStar(self, robot):
         """
         Run TStar given a start node and end node, using RRT to generate a tree.
         """
         # Build initial tree
         path = self.getPathNodes(self.robotNode)  # Get the path from the start node to goal
         path.append(self.tree[0])
-        for curnodei in range(1,len(path)):
-            curnode = path[curnodei]
 
-            # Fails to make it
-            if not robot.goto(curnode.point):
-                p = robot.pos
+        curnode = path[1]
 
-                # DONE!
-                if p == self.goalPoint:
-                    return None
+        # Fails to make it
+        if not robot.goto(curnode.point):
+            p = robot.pos
 
-                # Kill previous node
-                prevnode = path[curnodei-1]
-                prevpoint = prevnode.point
+            # Kill previous node, no longer can get there
+            self.killNode(path[0])
 
-                # Kill previous node by removing it from the children list of its parent
-                for curchildi in range(len(curnode.children)):
-                    curpoint = curnode.children[curchildi].point
-                    if curpoint.x == prevpoint.x and curpoint.y == prevpoint.y:
-                        curnode.children.pop(curchildi)
-                        break
-
-                numdel = 0
-                # Also remove node from tree list:
-                for curnodei in range(len(tree)):
-                    curpoint = tree[curnodei-numdel].point
-                    if curpoint.x == prevpoint.x and curpoint.y == prevpoint.y:
-                        tree.pop(curnodei-numdel)
-                        numdel += 1
-
-                # Make new RRT
-                self.newpath = True
-                self.robotPoint = p
-                self.robotNode = RRTNode(p)
-                return None
-
-            else:
-                return None
-
-def TestVisualization():
-    # Generate example world with walls
-    walls = ((Point(2,  4), Point(5,  9)),
-             (Point(5,  9), Point(4,  4)),
-             (Point(4,  4), Point(2,  4)),
-             (Point(2, 12), Point(9, 12)),
-             (Point(2, 14), Point(9, 12)),
-             (Point(2, 12), Point(2, 14)))
-
-    start = Point(1, 1)
-    goal  = Point(9, 14)
-    minPt = (0, 0)   # (xmin, ymin)
-    maxPt = (10, 15) # (xmax, ymax)
-    mapobj = Map(minPt, maxPt)
-
-    # Gimme some test segments to visualize.
-    points = (Point(2, 4), Point(4, 4), Point(8, 12), Point(5, 9))
-    segments = (Segment(points[0], points[1], 0.46),
-                Segment(points[1], points[2], 0.63),
-                Segment(points[0], points[2], 0.20),
-                Segment(points[3], points[2], 0.83),
-                Segment(points[1], points[3], 1))
-
-    visual = Visualization(walls, start, goal, (10, 15))
-
-    visual.ShowWorld()
-    visual.ShowBot(start, 0)
-    visual.ShowPoints(points)
-    visual.ShowSegments(segments)
-    visual.ShowFigure()
-    input("ProbSegment test displayed. (hit return to continue)")
-    visual.ClearFigure()
-    visual.ShowFigure()
-    input("World cleared. (hit return to continue)")
-
-    # TEST RRT
-    # Start the tree with start state and no parent
-    # execute the search
-    tree = [RRTNode(start, None, None)]
-    tree = RRT(tree, goal, Nmax, minPt[0], minPt[1], maxPt[0], maxPt[1], mapobj) # TODO try to reduce arguments to RRT to maxPt, minPt form
-
-    if tree is None:
-        print("UNABLE TO FIND A PATH in %d steps", Nmax)
-        input("(hit return to exit)")
-        return
-
-    # Show the path.
-    visual.ShowNodes(tree)
-    print("PATH found after ", len(tree), " samples.")
-    input("(hit return to exit)")
-    return
-
-def main():
-    TestVisualization()
-
-if __name__== "__main__":
-    main()
+            # Make new RRT
+            self.robotNode = RRTNode(p)
+            self.robotPoint = p
+            self.newpath = True
+            return None
+        else:
+            p = robot.pos
+            self.robotNode = curnode
+            self.robotPoint = p
+            self.newpath = False
+            return self.robotNode
