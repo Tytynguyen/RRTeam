@@ -135,6 +135,7 @@ class Robot():
     (always returns true for now)
     '''
     def turn(self, tabs):
+        # TODO check for impact when turning
         self.theta = tabs
         return True
 
@@ -153,7 +154,6 @@ class Robot():
         closestWallSegPos = -1
         # check each wall for a collision
         for wall in self.walls:
-            # TODO: implement SegmentCrossRectangle
             wallseg = Segment(wall[0], wall[1])
             # print("Wall: ", wall)
             (i1, i2, segPos) = SegmentCrossRectangle(wallseg.seg, path.seg, ROBOT_WIDTH / 2)
@@ -253,7 +253,7 @@ def TestVisualization():
     # Start the tree with start state and no parent
     # execute the search
     tree = [RRTNode(start, None, None)]
-    goalnode = RRT(tree, goal, Nmax, minPt[0], minPt[1], maxPt[0], maxPt[1], mapobj) # TODO try to reduce arguments to RRT to maxPt, minPt form
+    goalnode = RRT(tree, goal, Nmax, minPt[0], minPt[1], maxPt[0], maxPt[1], mapobj)
 
     if tree is None:
         print("UNABLE TO FIND A PATH in %d steps", Nmax)
@@ -313,7 +313,8 @@ def MapFromPath():
         visual.ShowNodes(planner.tree)
         visual.ShowSegments(robotmap.segments)
         if (goalNode is not None):
-            visual.ShowRRTSegments(planner.getPathSegments(goalNode))
+            #visual.ShowRRTSegments(planner.getPathSegments(goalNode))
+            visual.ShowRRTSegments(planner.getTreeSegments())
         else:
             input("Planning failed, try changing dstep or Nmax")
             break

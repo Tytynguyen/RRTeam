@@ -191,6 +191,26 @@ class RRTStar:
             self.newpath = False
             return self.robotNode
 
+    '''
+    Return segments for every parent-child connection in the whole darn tree
+    '''
+    def getTreeSegments(self):
+        basenode = self.tree[0]
+        segmentList = []
+        self.getChildSegments(basenode, segmentList)
+        return segmentList
+
+    '''
+    Add to segmentList in place for every child of the given node, recursively
+    '''
+    def getChildSegments(self, parent, segmentList):
+        if parent.children is None:
+            return
+
+        for child in parent.children:
+            segmentList.append(Segment(child.point, parent.point))
+            self.getChildSegments(child, segmentList)
+
     def getPathSegments(self, node):
         """
         Get the segments from the given node to the base of the tree
