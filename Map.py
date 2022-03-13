@@ -150,6 +150,10 @@ class Robot():
         # create a segment between current position and final position
         path = Segment(self.pos, p2)
 
+        # also create an extended segment that goes SENSOR_RANGE past the final pos
+        # in order to check for walls beyond the end of the path
+        extPath = path.rescale(path.getLength() + SENSOR_RANGE)
+
         closestWall = -1
         closestWallDist = -1
         closestWallSegPos = -1
@@ -157,7 +161,7 @@ class Robot():
         for wall in self.walls:
             wallseg = Segment(wall[0], wall[1])
             # print("Wall: ", wall)
-            (i1, i2, segPos) = SegmentCrossRectangle(wallseg.seg, path.seg, ROBOT_WIDTH / 2)
+            (i1, i2, segPos) = SegmentCrossRectangle(wallseg.seg, extPath.seg, ROBOT_WIDTH / 2)
             if (i1 == -1):
                 # no collision
                 continue
@@ -182,6 +186,16 @@ class Robot():
         if (closestWall == -1):
             print("No wall!")
             # no wall found!
+            return p2
+        elif (closestWallDist >= path.getLength()):
+            # wall found but it was past the end of the path
+            print("Path clear, but wall past end at ", Segment(Point(closestWall[0][0], closestWall[0][1]),
+                           Point(closestWall[1][0], closestWall[1][1]), 1))
+            # update map
+            self.map.addSegment(Point(closestWall[0][0], closestWall[0][1]),
+                           Point(closestWall[1][0], closestWall[1][1]), 1)
+
+            # TODO might still need to back away
             return p2
         else:
             print("Wall at", Segment(Point(closestWall[0][0], closestWall[0][1]),
@@ -254,7 +268,7 @@ def TestVisualization():
     # Start the tree with start state and no parent
     # execute the search
     tree = [RRTNode(start, None, None)]
-    goalnode = RRT(tree, goal, Nmax, minPt[0], minPt[1], maxPt[0], maxPt[1], mapobj)
+    goalnode = RRT(tree, goal, Nmax, minPt[0], minPt[1], maxPt[0], maxPt[1], mapobj, dstep)
 
     if tree is None:
         print("UNABLE TO FIND A PATH in %d steps", Nmax)

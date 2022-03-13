@@ -182,7 +182,7 @@ class Point:
 
 '''
 The special Segment class carries a probability and is used only for mapping
-predicted segments. Walls are represented as pairs of points.
+predicted segments. Walls are represented as pairs of Points.
 
 STORES: A tuple representing the two points, as well as each point
 '''
@@ -199,3 +199,31 @@ class Segment:
 
     def SetProb(self, prob):
         self.prob = prob
+
+    def getLength(self):
+        return np.sqrt((self.pt2.x-self.pt1.x)**2 + (self.pt2.y-self.pt2.y)**2)
+
+    def getXComp(self):
+        return self.pt2.x - self.pt1.x
+
+    def getYComp(self):
+        return self.pt2.y - self.pt1.y
+
+    '''
+    Return a copy of the segment scaled to the given length, 
+    keeping pt1 in the same place and moving pt2
+    '''
+    def rescale(self, length):
+        # Ratio of length of new to old
+        ratio = length / self.getLength()
+
+        # Scale X component and shift properly
+        newX = ratio * self.getXComp() + self.pt1.x
+
+        # Scale Y component and shift properly
+        newY = ratio * self.getYComp() + self.pt1.y
+
+        # Update self
+        newpt2 = Point(newX, newY)
+
+        return Segment(self.pt1, newpt2)
