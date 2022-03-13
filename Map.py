@@ -6,6 +6,7 @@ import numpy as np
 from planarutils import *
 from utilities import *
 from RRTStar import *
+import worlds as worlds
 
 ## GLOBAL CONSTANTS
 SENSOR_RANGE = 1 # in (x, y) units
@@ -271,14 +272,7 @@ def TestVisualization():
 def MapFromPath():
     ## SETUP
     # create a world (walls)
-    # walls = ((Point(4,  0), Point(4,  6)),
-    #          (Point(4,  10), Point(9,  10)))
-    walls = ((Point(2,  4), Point(5,  9)),
-             (Point(5,  9), Point(4,  4)),
-             (Point(4,  4), Point(2,  4)),
-             (Point(2, 12), Point(9, 12)),
-             (Point(2, 14), Point(9, 12)),
-             (Point(2, 12), Point(2, 14)))
+    walls = worlds.simple
 
     minPt = [0, 0]
     maxPt = [10, 15]
