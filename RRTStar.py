@@ -23,7 +23,7 @@
 import random
 
 import numpy as np
-from planarutils import *
+# from planarutils2 import *
 from utilities import *
 
 dstep = 1
@@ -246,14 +246,14 @@ class RRTStar:
         if node.children != []:
             for child in node.children:
                 self.killNode(child)
-        
+
         # Kill node by removing it from the children list of its parent
         parent = node.parent
         parent.children.remove(node)
 
         # Also remove node from tree list:
         self.tree.remove(node)
-    
+
 
     # def getAllChildren(self, node, nodelist = []):
     #     """

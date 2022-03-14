@@ -140,7 +140,7 @@ class Visualization():
     '''
     def ShowFigure(self):
         # Show the plot.
-        plt.pause(0.01)
+        plt.pause(0.08)
 
     #@@@@@@@@@@@@@@@@@@@ RRTStar Visualization @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -162,6 +162,8 @@ class Point:
         return Point(self.x - o.x, self.y - o.y)
 
     def __eq__(self, o):
+        if (o is None):
+            return False
         return self.x == o.x and self.y == o.y
 
     def __repr__(self):
@@ -206,6 +208,8 @@ class Segment:
         return "{" + "(" + str(self.pt1) + ", " + str(self.pt2) + ")" + "," + str(self.prob) + "}"
 
     def __eq__(self, other):
+        if (other is None):
+            return False
         return self.pt1 == other.pt1 and self.pt2 == other.pt2 and self.prob == other.prob
 
 

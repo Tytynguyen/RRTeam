@@ -3,16 +3,17 @@
 #   Stores data structures for Map and Points
 
 import numpy as np
-from planarutils import *
+from planarutils2 import *
 from utilities import *
 from RRTStar import *
 import worlds as worlds
 import random
 
 ## GLOBAL CONSTANTS
-SENSOR_RANGE = 5 # in (x, y) units :O
+SENSOR_RANGE = 0.1 # in (x, y) units :O
 
 ROBOT_WIDTH = 0.05
+CUSHION = 0.1
 ## END GLOBAL CONSTANTS
 
 '''
@@ -51,8 +52,8 @@ class Map():
     pt2: pt describing second endpoint
     prob: probability that segment is truly a wall
     '''
-    def addSegment(self, pt1, pt2, prob):
-        self.segments.append(Segment(pt1, pt2, prob))
+    def addSegment(self, s):
+        self.segments.append(s)
         # TODO: do some checking here to see if we can elide our segment with another
         # i.e. check if this segment is "near" any other segments
         # for each nearby segment, check colinearity
@@ -119,7 +120,7 @@ class Robot():
 
         ## Move towards our point!
         # also handles collision checking and map updating
-        self.pos = self.distSensor(p2)
+        self.pos = self.distSensor2(p2)
         if (self.pos == p2):
             return True
         else:
@@ -141,6 +142,69 @@ class Robot():
         self.theta = tabs
         return True
 
+
+    '''
+    Checks if there is a wall ahead of the robot. Adds wall to map if so.
+    UPDATED VERSION--USES PLANARUTILS2
+    RETURNS:
+    final position of robot after travel (stopping in front of walls)
+    '''
+    def distSensor2(self, p2):
+        # create segment between current position and p2
+        path = Segment(self.pos, p2)
+
+        # loop through all walls to find ones that intersect the path
+        rectEdges = RectangleFromCenterline(path, ROBOT_WIDTH / 2)
+
+        # loop variables to store best outcome
+        shortestDist = -1
+        shortestPoint = None
+        shortestWall = None
+
+        for wallpts in self.walls:
+            wall = Segment(wallpts[0], wallpts[1])
+
+            # find intersection with this wall
+            intersection = SegmentCrossRectangle(wall, rectEdges)
+
+            ## CASE 1: NO INTERSECTION
+            if (intersection == None):
+                # wall is irrelevant
+                continue
+
+            ## CASE 2: POINT INTERSECTION
+            # very rare
+            if (intersection.pt1 == intersection.pt2):
+                # TODO: do... something?
+                print("Reached point intersection case. Ignoring...")
+                continue
+
+            ## CASE 3: FULL INTERSECTION
+            # need to get:
+            # 1. robot final position (closest position to wall along centerline)
+            # 2. revised segment based on sensor range at final position (TODO)
+            # need to compare with other final positions
+            closestPoint = WhereSegmentOnPath(intersection, path, CUSHION)
+
+            # check against other wall intersections
+            dist = closestPoint.dist(self.pos)
+            if (shortestDist == -1 or dist < shortestDist):
+                # this is the closest intersection found
+                shortestDist = dist
+                shortestPoint = closestPoint
+                shortestWall = intersection
+
+            # intersection is behind some other known wall
+
+        # all walls processed
+        # CASE 1: NO WALLS IN PATH
+        if (shortestWall == None):
+            return p2
+
+        # CASE 2: WALL FOUND IN PATH
+        self.map.addSegment(shortestWall)
+        print(shortestPoint)
+        return shortestPoint
 
     '''
     Checks if there is a wall ahead of the robot. Adds wall to map if so
@@ -226,7 +290,7 @@ def MapFromPath():
     # define starting postion
     startPt = Point(1, 1)
     # define goal position
-    goalPt = Point(9, 14)
+    goalPt = Point(9, 1)
 
     # create a map
     robotmap = Map(minPt, maxPt)
@@ -265,7 +329,7 @@ def MapFromPath():
         if (robot.pos == goalPt):
             input("Made it!")
             break
-        input("Step")
+        # input("Step")
         print("--",stepCounter,"--")
         stepCounter += 1
 
