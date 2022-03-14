@@ -35,7 +35,7 @@ class RRTNode:
     """
     Tree node class that stores parent information and the point vector
     """
-    def __init__(self, point, parentnode=None, childrennodes=None):
+    def __init__(self, point, childrennodes, parentnode=None):
         self.point = point
         self.parent = parentnode
         self.children = childrennodes
@@ -48,11 +48,11 @@ class RRTStar:
     def __init__(self, robotPt, goalPt, robot, map, minPt, maxPt):
         # define class variables
         self.robotPoint = robotPt
-        self.robotNode = RRTNode(self.robotPoint)
+        self.robotNode = RRTNode(self.robotPoint, [])
         self.goalPoint = goalPt
         self.robot = robot
         self.map = map
-        self.tree = [RRTNode(self.goalPoint)]
+        self.tree = [RRTNode(self.goalPoint, [])]
         self.minPt = minPt
         self.maxPt = maxPt
         self.newpath = True
@@ -114,10 +114,10 @@ class RRTStar:
 
             # Check if the node already connects...
             if mapobj.localPlanner(nearpoint, robotpoint):
-                robotnode = RRTNode(robotpoint, nearnode)
+                robotnode = RRTNode(robotpoint, [], nearnode)
                 self.tree.append(robotnode)
 
-                if nearnode.children is None:
+                if nearnode.children == []:
                     nearnode.children = [robotnode]
                 else:
                     nearnode.children.append(robotnode)
@@ -129,13 +129,13 @@ class RRTStar:
             nx = dstep*np.cos(t) + nearpoint.x
             ny = dstep*np.sin(t) + nearpoint.y
             nextpoint = Point(nx, ny)
-            nextnode = RRTNode(nextpoint, nearnode)
+            nextnode = RRTNode(nextpoint, [], nearnode)
 
             # Check whether nearpoint connects to next generated point
             if mapobj.localPlanner(nearpoint, nextpoint):
                 self.tree.append(nextnode)
 
-                if nearnode.children is None:
+                if nearnode.children == []:
                     nearnode.children = [nextnode]
                 else:
                     nearnode.children.append(nextnode)
@@ -144,10 +144,10 @@ class RRTStar:
 
                 # Also try to connect the goal.
                 if mapobj.localPlanner(nextpoint, robotpoint):
-                    robotnode = RRTNode(robotpoint, nextnode)
+                    robotnode = RRTNode(robotpoint, [], nextnode)
                     self.tree.append(robotnode)
 
-                    if nextnode.children is None:
+                    if nextnode.children == []:
                         nextnode.children = [robotnode]
                     else:
                         nextnode.children.append(robotnode)
@@ -179,13 +179,13 @@ class RRTStar:
             self.killNode(path[0])
 
             # Make new RRT
-            self.robotNode = RRTNode(p)
+            self.robotNode = RRTNode(p, [])
             self.robotPoint = p
             self.newpath = True
             return self.robotNode
         else:
             p = robot.pos
-            self.robotNode = RRTNode(p,curnode.parent)
+            self.robotNode = RRTNode(p, [], curnode.parent)
             self.killNode(path[0])
             self.robotPoint = p
             self.newpath = False
@@ -204,7 +204,7 @@ class RRTStar:
     Add to segmentList in place for every child of the given node, recursively
     '''
     def getChildSegments(self, parent, segmentList):
-        if parent.children is None:
+        if parent.children == []:
             return
 
         for child in parent.children:
@@ -243,7 +243,7 @@ class RRTStar:
 
     def killNode(self, node):
         # Kill all of the node's kids!
-        if node.children is not None:
+        if node.children != []:
             for child in node.children:
                 self.killNode(child)
         
