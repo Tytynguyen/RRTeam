@@ -249,6 +249,7 @@ def MapFromPath():
     while True:
         # Create a path from goal to start
         goalNode = planner.update()
+        visual.ClearFigure()
         visual.ShowNodes(planner.tree)
         visual.ShowSegments(robotmap.segments)
         if (goalNode is not None):
@@ -266,7 +267,6 @@ def MapFromPath():
         # input("Step")
         print("--",stepCounter,"--")
         stepCounter += 1
-        visual.ClearFigure()
 
 
 def main():
