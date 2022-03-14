@@ -195,7 +195,8 @@ class Segment:
         self.prob = prob
 
     def __repr__(self):
-        return "(" + str(self.pt1) + ", " + str(self.pt2) + ")"
+        return "{" + "(" + str(self.pt1) + ", " + str(self.pt2) + ")" + "," + str(self.prob) + "}"
+
 
     def SetProb(self, prob):
         self.prob = prob

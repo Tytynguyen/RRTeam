@@ -29,9 +29,15 @@ class WallNode:
         point = Point(x,y)
         neighborNodesandSegments = [(neighbor node, segment),...]
     """
-    def __init__(self, point, neighborNodesandSegments = []):
+    def __init__(self, point, neighborNodesandSegments = None):
         self.point = point
-        self.neighborNodesandSegments = neighborNodesandSegments    # Store neighbor node and edge between them (node, seg)
+
+        # Store neighbor node and edge between them (node, seg)
+        if neighborNodesandSegments is None:
+            self.neighborNodesandSegments = []
+        else:
+            self.neighborNodesandSegments = neighborNodesandSegments
+
 
     def addNeighbor(self, neighborWallNode, prob = None):
         """
@@ -39,6 +45,7 @@ class WallNode:
         Also create segment between them and calculate its probability of being a wall
         CALL ONCE PER NEIGHBOR (do not call for neighbor node as well)
         """
+
         # Make new segment between the two nodes, probability uncalculated
         newSegment = Segment(self.point, neighborWallNode.point)
 
@@ -88,7 +95,7 @@ class WallNode:
         Calculate the probability of there being a wall for a segment
         robotwidth 0.05
         """
-        return C_wall * segment.getLength()
+        return 1/(segment.getLength()+1)
 
 class TExplore:
     def __init__(self, goalPt, robot, map):
@@ -129,7 +136,6 @@ class TExplore:
         self.wallNodes.append(node_top_left)
         self.wallNodes.append(node_bot_right)
         self.wallNodes.append(node_top_right)
-        print("Test")
 
 
     # # TODO: Use KDtree to connect nearest neighbors
