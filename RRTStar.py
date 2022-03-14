@@ -185,8 +185,10 @@ class RRTStar:
             return self.robotNode
         else:
             p = robot.pos
-            self.robotNode = RRTNode(p, [], curnode.parent)
+            self.robotNode = curnode
+
             self.killNode(path[0])
+
             self.robotPoint = p
             self.newpath = False
             return self.robotNode
@@ -243,9 +245,9 @@ class RRTStar:
 
     def killNode(self, node):
         # Kill all of the node's kids!
-        if node.children != []:
-            for child in node.children:
-                self.killNode(child)
+
+        for child in node.children:
+            self.killNode(child)
 
         # Kill node by removing it from the children list of its parent
         parent = node.parent
