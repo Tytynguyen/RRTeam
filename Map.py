@@ -7,9 +7,10 @@ from planarutils import *
 from utilities import *
 from RRTStar import *
 import worlds as worlds
+import random
 
 ## GLOBAL CONSTANTS
-SENSOR_RANGE = 5 # in (x, y) units
+SENSOR_RANGE = 5 # in (x, y) units :O
 
 ROBOT_WIDTH = 0.05
 ## END GLOBAL CONSTANTS
@@ -217,7 +218,7 @@ class Robot():
 def MapFromPath():
     ## SETUP
     # create a world (walls). Pick from any world you want in the worlds.py file
-    walls = worlds.triangles
+    walls = worlds.simple
 
     minPt = [0, 0]
     maxPt = [10, 15]
@@ -264,12 +265,13 @@ def MapFromPath():
         if (robot.pos == goalPt):
             input("Made it!")
             break
-        # input("Step")
+        input("Step")
         print("--",stepCounter,"--")
         stepCounter += 1
 
 
 def main():
+    random.seed(0)
     #TestVisualization()
 
     MapFromPath()

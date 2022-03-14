@@ -140,7 +140,7 @@ class Visualization():
     '''
     def ShowFigure(self):
         # Show the plot.
-        plt.pause(0.001)
+        plt.pause(0.01)
 
     #@@@@@@@@@@@@@@@@@@@ RRTStar Visualization @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -168,7 +168,7 @@ class Point:
         return str((round(self.x,2),round(self.y,2)))
 
 
-    # Report distance to another poimt (Euclidean)
+    # Report distance to another point (Euclidean)
     def dist(self, other):
         return np.sqrt((other.x - self.x)**2 + (other.y - self.y)**2)
 
@@ -177,6 +177,14 @@ class Point:
 
     def scale(self, alpha):
         return Point(self.x * alpha, self.y * alpha)
+
+    # 2D vector cross product
+    def cross(self, o):
+        return self.x*o.y - self.y*o.x
+
+    # dot product
+    def dot(self, o):
+        return self.x*o.y + self.y*o.y
 
 
 
@@ -218,8 +226,13 @@ class Segment:
         newy = (self.pt1.y + self.pt2.y)/2
         return Point(newx,newy)
 
+    def xdif(self):
+        return self.pt2.x - self.pt1.x
+    def ydif(self):
+        return self.pt2.y - self.pt1.x
+
     '''
-    Return a copy of the segment scaled to the given length, 
+    Return a copy of the segment scaled to the given length,
     keeping pt1 in the same place and moving pt2
     '''
     def rescale(self, length):
