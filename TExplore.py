@@ -54,7 +54,7 @@ class TExplore:
 
         # Move to goal node if close
         distToGoal = self.robot.pos.dist(self.goalPoint)
-        if random.uniform(0.0, 1.0) <= (1/(.5*distToGoal+1)):
+        if random.uniform(0.0, 1.0) <= (1/(distToGoal+1)):
             # Pick goal as target
             self.robot.goto(self.goalPoint)
             return roadmap
