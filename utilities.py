@@ -102,7 +102,7 @@ class Visualization():
     RETURNS: None
     '''
     def ShowBot(self, robot):
-        plt.plot(robot.pos.x, robot.pos.y, marker=(3, 0, robot.theta+90), markersize=10)
+        plt.plot(robot.pos.x, robot.pos.y, marker=(3, 0, 180 / np.pi * robot.theta+90), markersize=10)
 
     '''
     Takes a point and displays it

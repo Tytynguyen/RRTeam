@@ -244,23 +244,16 @@ class RRTStar:
     def killNode(self, node):
         # Kill all of the node's kids!
         if node.children is not None:
-            for curchildi in range(len(node.children)):
-                self.killNode(node.children[curchildi])
+            for child in node.children:
+                self.killNode(child)
         
         # Kill node by removing it from the children list of its parent
         parent = node.parent
-        for curchildi in range(len(parent.children)):
-            curpoint = parent.children[curchildi].point
-            if curpoint == node.point:
-                parent.children.pop(curchildi)
-                break
+        parent.children.remove(node)
 
         # Also remove node from tree list:
-        for curnodei in range(len(self.tree)):
-            curpoint = self.tree[curnodei].point
-            if curpoint == node.point:
-                self.tree.pop(curnodei)
-                break
+        self.tree.remove(node)
+    
 
     # def getAllChildren(self, node, nodelist = []):
     #     """

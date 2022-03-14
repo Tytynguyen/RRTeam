@@ -217,7 +217,7 @@ class Robot():
 def MapFromPath():
     ## SETUP
     # create a world (walls). Pick from any world you want in the worlds.py file
-    walls = worlds.door
+    walls = worlds.triangles
 
     minPt = [0, 0]
     maxPt = [10, 15]
