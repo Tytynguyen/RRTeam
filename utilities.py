@@ -209,6 +209,11 @@ class Segment:
 
     def getYComp(self):
         return self.pt2.y - self.pt1.y
+    
+    def getMidpoint(self):
+        newx = (self.pt1.x + self.pt2.x)/2
+        newy = (self.pt1.y + self.pt2.y)/2
+        return Point(newx,newy)
 
     '''
     Return a copy of the segment scaled to the given length, 
