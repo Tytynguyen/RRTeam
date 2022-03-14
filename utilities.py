@@ -197,6 +197,9 @@ class Segment:
     def __repr__(self):
         return "{" + "(" + str(self.pt1) + ", " + str(self.pt2) + ")" + "," + str(self.prob) + "}"
 
+    def __eq__(self, other):
+        return self.pt1 == other.pt1 and self.pt2 == other.pt2 and self.prob == other.prob
+
 
     def SetProb(self, prob):
         self.prob = prob
@@ -209,7 +212,7 @@ class Segment:
 
     def getYComp(self):
         return self.pt2.y - self.pt1.y
-    
+
     def getMidpoint(self):
         newx = (self.pt1.x + self.pt2.x)/2
         newy = (self.pt1.y + self.pt2.y)/2
