@@ -261,3 +261,13 @@ class RRTStar:
             if curpoint == node.point:
                 self.tree.pop(curnodei)
                 break
+
+    # def getAllChildren(self, node, nodelist = []):
+    #     """
+    #     Get all nodes that are children, grandchildren, etc. of a specific node
+    #     """
+    #     nodelist.append(node.children)
+    #     for child in node.children:
+    #         self.getAllChildren(child, nodelist)
+    #
+    #     return nodelist
