@@ -242,6 +242,11 @@ class RRTStar:
         return list
 
     def killNode(self, node):
+        # Kill all of the node's kids!
+        if node.children is not None:
+            for curchildi in range(len(node.children)):
+                self.killNode(node.children[curchildi])
+        
         # Kill node by removing it from the children list of its parent
         parent = node.parent
         for curchildi in range(len(parent.children)):

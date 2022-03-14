@@ -9,7 +9,7 @@ from RRTStar import *
 import worlds as worlds
 
 ## GLOBAL CONSTANTS
-SENSOR_RANGE = 1 # in (x, y) units
+SENSOR_RANGE = 5 # in (x, y) units
 
 ROBOT_WIDTH = 0.05
 ## END GLOBAL CONSTANTS
@@ -216,8 +216,8 @@ class Robot():
 
 def MapFromPath():
     ## SETUP
-    # create a world (walls)
-    walls = worlds.simple
+    # create a world (walls). Pick from any world you want in the worlds.py file
+    walls = worlds.door
 
     minPt = [0, 0]
     maxPt = [10, 15]
