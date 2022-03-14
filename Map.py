@@ -206,83 +206,10 @@ class Robot():
         print(shortestPoint)
         return shortestPoint
 
-    '''
-    Checks if there is a wall ahead of the robot. Adds wall to map if so
-    RETURNS:
-    final position of robot after travel (stopping in front of walls)
-    '''
-    def distSensor(self, p2):
-        # create a segment between current position and final position
-        path = Segment(self.pos, p2)
-
-        # also create an extended segment that goes SENSOR_RANGE past the final pos
-        # in order to check for walls beyond the end of the path
-        extPath = path.rescale(path.getLength() + SENSOR_RANGE)
-
-        closestWall = -1
-        closestWallDist = -1
-        closestWallSegPos = -1
-        # check each wall for a collision
-        for wall in self.walls:
-            wallseg = Segment(wall[0], wall[1])
-            # print("Wall: ", wall)
-            (i1, i2, segPos) = SegmentCrossRectangle(wallseg.seg, extPath.seg, ROBOT_WIDTH / 2)
-            if (i1 == -1):
-                # no collision
-                continue
-            else:
-                i1pt = Point(i1[0], i1[1])
-                i2pt = Point(i2[0], i2[1])
-                # check to see if this wall is closest
-                if closestWall == -1:
-                    closestWall = (i1, i2)
-                    closestWallDist = i1pt.dist(self.pos)
-                    closestWallSegPos = segPos
-                else:
-                    d = i1pt.dist(self.pos)
-                    if (d < closestWallDist):
-                        # this intersection is closer, so this wall is the one that matters
-                        closestWall = (i1, i2)
-                        closestWallDist = d
-                        closestWallSegPos = segPos
-
-        # all walls processed
-        # print(closestWall)
-        if (closestWall == -1):
-            print("No wall!")
-            # no wall found!
-            return p2
-        elif (closestWallDist >= path.getLength()):
-            # wall found but it was past the end of the path
-            print("Path clear, but wall past end at ", Segment(Point(closestWall[0][0], closestWall[0][1]),
-                           Point(closestWall[1][0], closestWall[1][1]), 1))
-            # update map
-            self.map.addSegment(Point(closestWall[0][0], closestWall[0][1]),
-                           Point(closestWall[1][0], closestWall[1][1]), 1)
-
-            # TODO might still need to back away
-            return p2
-        else:
-            print("Wall at", Segment(Point(closestWall[0][0], closestWall[0][1]),
-                           Point(closestWall[1][0], closestWall[1][1]), 1))
-            # Hit a wall!!
-            # update map
-            self.map.addSegment(Point(closestWall[0][0], closestWall[0][1]),
-                           Point(closestWall[1][0], closestWall[1][1]), 1)
-
-            # back away from intersection by a little
-            # TODO: BACK AWAY FROM THE SEGMENT BY A little
-            # and double check that you aren't moving past the starting point
-            # return that final position
-            # (for now, just go to segment)
-            pt2 = Point(closestWallSegPos[0], closestWallSegPos[1])
-            print("Moving to", pt2)
-            return pt2
-
 def MapFromPath():
     ## SETUP
     # create a world (walls). Pick from any world you want in the worlds.py file
-    walls = worlds.simple
+    walls = worlds.triangles
 
     minPt = [0, 0]
     maxPt = [10, 15]
@@ -290,7 +217,7 @@ def MapFromPath():
     # define starting postion
     startPt = Point(1, 1)
     # define goal position
-    goalPt = Point(9, 1)
+    goalPt = Point(9, 14)
 
     # create a map
     robotmap = Map(minPt, maxPt)
@@ -335,7 +262,7 @@ def MapFromPath():
 
 
 def main():
-    random.seed(0)
+    # random.seed(0)
     #TestVisualization()
 
     MapFromPath()
