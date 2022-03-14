@@ -13,7 +13,7 @@ import random
 SENSOR_RANGE = 0.1 # in (x, y) units :O
 
 ROBOT_WIDTH = 0.05
-CUSHION = 0.1
+CUSHION = 1
 ## END GLOBAL CONSTANTS
 
 '''
@@ -188,11 +188,13 @@ class Robot():
 
             # check against other wall intersections
             dist = closestPoint.dist(self.pos)
+            print(dist, closestPoint, intersection)
             if (shortestDist == -1 or dist < shortestDist):
                 # this is the closest intersection found
                 shortestDist = dist
                 shortestPoint = closestPoint
                 shortestWall = intersection
+                print("^")
 
             # intersection is behind some other known wall
 
@@ -256,7 +258,7 @@ def MapFromPath():
         if (robot.pos == goalPt):
             input("Made it!")
             break
-        # input("Step")
+        input("Step")
         print("--",stepCounter,"--")
         stepCounter += 1
 

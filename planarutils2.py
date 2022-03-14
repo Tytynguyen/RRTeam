@@ -296,7 +296,7 @@ def WhereSegmentOnPath(s, centerline, backawaydist = 0):
         intpos -= Point(1, m).scale(1 / np.sqrt(1 + m*m) * backawaydist)
 
     # check how far back we just moved
-    if (intpos.dist(centerline.pt2) > intpos.dist(centerline.pt1)):
+    if (intpos.dist(centerline.pt2) > centerline.getLength()):
         # We moved too far!!
         intpos = centerline.pt1
     return intpos
@@ -365,7 +365,21 @@ def CheckWhereSegmentCrossSegment():
     print("------")
 
 def main():
-    CheckWhereSegmentCrossSegment()
+    # CheckWhereSegmentCrossSegment()
+
+    # check WhereSegmentOnPath()
+    s1 = Segment(Point(0,0), Point(1, 0))
+    s2 = Segment(Point(1, 0), Point(1, 1))
+    print("Nominal: (1,0)")
+    print("Output:", WhereSegmentOnPath(s1, s2))
+    print("------")
+
+    s1 = Segment(Point(0,0), Point(1, 0.2))
+    s2 = Segment(Point(1, 0), Point(2, 1))
+    print("Nominal: (1,0)")
+    print("Output:", WhereSegmentOnPath(s1, s2))
+    print("------")
+
 
 
 

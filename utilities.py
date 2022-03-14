@@ -217,7 +217,7 @@ class Segment:
         self.prob = prob
 
     def getLength(self):
-        return np.sqrt((self.pt2.x-self.pt1.x)**2 + (self.pt2.y-self.pt2.y)**2)
+        return np.sqrt((self.pt2.x-self.pt1.x)**2 + (self.pt2.y-self.pt1.y)**2)
 
     def getXComp(self):
         return self.pt2.x - self.pt1.x
