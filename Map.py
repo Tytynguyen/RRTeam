@@ -12,8 +12,8 @@ import random
 ## GLOBAL CONSTANTS
 SENSOR_RANGE = 0.1 # in (x, y) units :O
 
-ROBOT_WIDTH = 0.05
-CUSHION = 1
+ROBOT_WIDTH = 0.1
+CUSHION = 1.5
 ## END GLOBAL CONSTANTS
 
 '''
@@ -261,6 +261,8 @@ def MapFromPath():
         # input("Step")
         print("--",stepCounter,"--")
         stepCounter += 1
+        if (stepCounter >= 56):
+            input("Step")
 
 
 def main():
