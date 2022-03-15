@@ -5,6 +5,20 @@
 from utilities import *
 import numpy as np
 
+
+## INHERITED FUNCTIONS
+def PointNearPoint(d, pA, pB):
+    return ((pA[0]-pB[0])**2 + (pA[1]-pB[1])**2 <= d**2)
+
+def SegmentEndpointsNearSegment(d, sA, sB):
+    # First check the endpoints-to-endpoints.
+    if (PointNearPoint(d, sA[0], sB[0]) or
+        PointNearPoint(d, sA[0], sB[1]) or
+        PointNearPoint(d, sA[1], sB[0]) or
+        PointNearPoint(d, sA[1], sB[1])):
+        return True
+    return False
+
 #
 #   Segment Crossing Segment (INHERITED)
 #

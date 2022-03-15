@@ -14,6 +14,7 @@ SENSOR_RANGE = 0.1 # in (x, y) units :O
 
 ROBOT_WIDTH = 0.1
 CUSHION = 1.5
+ELIDE_JUMP = 0.05
 ## END GLOBAL CONSTANTS
 
 '''
@@ -32,6 +33,7 @@ class Map():
         self.segments = [] # list of segments
         self.xlim = (minpt[0], maxpt[0])
         self.ylim = (minpt[1], maxpt[1])
+        self.elideCounter = 0
 
         # add each wall as a segment
         self.segments.append(Segment(Point(self.xlim[0], self.ylim[0]),
@@ -53,12 +55,75 @@ class Map():
     prob: probability that segment is truly a wall
     '''
     def addSegment(self, s):
-        self.segments.append(s)
+        # self.segments.append(s)
         # TODO: do some checking here to see if we can elide our segment with another
         # i.e. check if this segment is "near" any other segments
         # for each nearby segment, check colinearity
         # if within a specific threshold, combine the segments
-        # be careful not to close doorway gaps (@Tyler)
+
+        eliding = False
+        for seg in self.segments:
+            # check if they intersect
+            # if (SegmentCrossSegment(s.seg, seg.seg)):
+            # compute slopes
+            if (s.xdif() == 0):
+                slope1 = 100
+            else:
+                slope1 = s.ydif() / s.xdif()
+                if (slope1 < -100):
+                    slope1 = 100
+
+            if (seg.xdif() == 0):
+                slope2 = 100
+            else:
+                slope2 = seg.ydif() / seg.xdif()
+                if (slope2 < -100):
+                    slope2 = 100
+
+            # check slopes
+            ratio = (slope1 - slope2) / (1+slope1*slope2)
+            if abs(ratio) < 0.05:
+                # check proximity
+                if (SegmentEndpointsNearSegment(ELIDE_JUMP, seg.seg, s.seg)):
+                    eliding = True
+                    self.elideCounter += 1
+                    self.segments.remove(seg)
+                    # combine
+                    s1 = Segment(s.pt1, seg.pt1)
+                    s1len = s1.getLength()
+                    s2 = Segment(s.pt1, seg.pt2)
+                    s2len = s2.getLength()
+                    s3 = Segment(s.pt2, seg.pt1)
+                    s3len = s3.getLength()
+                    s4 = Segment(s.pt2, seg.pt2)
+                    s4len = s4.getLength()
+
+                    # pick the longest resulting segment
+                    if (s1len > s2len):
+                        if (s1len > s3len):
+                            if (s1len > s4len):
+                                self.segments.append(s1)
+                            else:
+                                self.segments.append(s4)
+                        else:
+                            if (s3len > s4len):
+                                self.segments.append(s3)
+                            else:
+                                self.segments.append(s4)
+                    else:
+                        if (s2len > s3len):
+                            if (s2len > s4len):
+                                self.segments.append(s2)
+                            else:
+                                self.segments.append(s4)
+                        else:
+                            if (s3len > s4len):
+                                self.segments.append(s3)
+                            else:
+                                self.segments.append(s4)
+        if not eliding:
+            self.segments.append(s)
+
 
     def localPlanner(self, pt1, pt2):
         moveSegment = Segment(pt1, pt2)
@@ -87,7 +152,7 @@ Relies on:
 class Robot():
     ''' init()
     INPUTS:
-    walls: list of wall segments in world (TODO: make grid points instead)
+    walls: list of wall segments in world
     map: Map class instance
     pinit: Point describing position of robot center at start
     tinit: angle (radians) describing orientation of robot at start
@@ -208,7 +273,7 @@ class Robot():
 def MapFromPath():
     ## SETUP
     # create a world (walls). Pick from any world you want in the worlds.py file
-    walls = worlds.triangles
+    walls = worlds.door
 
     minPt = [0, 0]
     maxPt = [10, 15]
@@ -253,10 +318,18 @@ def MapFromPath():
         visual.ShowFigure()
 
         if (robot.pos == goalPt):
-            input("Made it!")
+            # TODO: add some statistics about path
+            print("")
+            print("DESTINATION REACHED")
+            print("-------------------")
+            print("*",stepCounter,"Steps")
+            print("*",len(robotmap.segments), "Segments")
+            print("*", robotmap.elideCounter, "Segments Elided")
+            input("")
             break
         # input("Step")
         print("--",stepCounter,"--")
+        print("Map segments:", len(robotmap.segments))
         stepCounter += 1
 
 

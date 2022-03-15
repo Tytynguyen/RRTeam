@@ -140,7 +140,7 @@ class Visualization():
     '''
     def ShowFigure(self):
         # Show the plot.
-        plt.pause(0.08)
+        plt.pause(0.001)
 
     #@@@@@@@@@@@@@@@@@@@ RRTStar Visualization @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

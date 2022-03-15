@@ -73,6 +73,9 @@ class RRTStar:
             self.newpath = False
             # print(len(self.tree))
 
+            # # post process
+            # self.PostProcess(self.tree)
+
             return robotNode
         else:
             # print(self.robot.pos)
