@@ -65,7 +65,9 @@ class RRTStar:
     # RETURN GOAL NODE
     def update(self):
         if self.newpath:
-            robotNode = self.RRT(self.robot.pos,Nmax,self.minPt[0],self.maxPt[0],self.minPt[1],self.maxPt[1],self.map)
+            robotNode = self.RRT(self.robot.pos, Nmax, 
+                                 self.minPt.x, self.maxPt.x, 
+                                 self.minPt.y, self.maxPt.y, self.map)
 
             # If too many nodes, we fail
             if robotNode is None:

@@ -25,14 +25,14 @@ Stores:
 class Map():
     ''' init()
     INPUTS:
-    xrange: [xmin, ymin] tuple with max/min x
-    yrange: [xmax, ymax] tuple with max/min y
+    minpt: Point containing coords of bottom left
+    maxpt: Point containing coords of top right
     '''
     def __init__(self, minpt, maxpt):
         # define class variables
         self.segments = [] # list of segments
-        self.xlim = (minpt[0], maxpt[0])
-        self.ylim = (minpt[1], maxpt[1])
+        self.xlim = (minpt.x, maxpt.x)
+        self.ylim = (minpt.y, maxpt.y)
         self.elideCounter = 0
 
         # add each wall as a segment
@@ -294,8 +294,8 @@ def MapFromPath():
     # create a world (walls). Pick from any world you want in the worlds.py file
     walls = worlds.door
 
-    minPt = [0, 0]
-    maxPt = [10, 15]
+    minPt = Point(0,  0 )
+    maxPt = Point(10, 15)
 
     # define starting postion
     startPt = Point(1, 1)
@@ -312,7 +312,7 @@ def MapFromPath():
     planner = RRTStar(startPt, goalPt, robot, robotmap, minPt, maxPt)
 
     # create viz
-    visual = Visualization(walls, startPt, goalPt, maxPt)
+    visual = Visualization(walls, startPt, goalPt, minPt, maxPt)
 
     visual.ShowWorld()
     visual.ShowBot(robot)
@@ -355,7 +355,6 @@ def MapFromPath():
 
 def main():
     random.seed(0)
-    #TestVisualization()
 
     MapFromPath()
 

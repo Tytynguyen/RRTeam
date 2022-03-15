@@ -26,7 +26,7 @@ STORES: Min/max bounds in x and y directions,
         goal (Point)
 '''
 class Visualization():
-    def __init__(self, walls, start, goal, maxPt, minPt = (0, 0)):
+    def __init__(self, walls, start, goal, minPt, maxPt):
         # Clear and show.
         self.min      = minPt
         self.max      = maxPt
@@ -46,8 +46,8 @@ class Visualization():
         # Create and prepare the axes.
         plt.axes()
         plt.gca().axis('on')
-        plt.gca().set_xlim(self.min[0], self.max[0])
-        plt.gca().set_ylim(self.min[1], self.max[1])
+        plt.gca().set_xlim(self.min.x, self.max.x)
+        plt.gca().set_ylim(self.min.y, self.max.y)
         plt.gca().set_aspect('equal')
 
         # Show the world
