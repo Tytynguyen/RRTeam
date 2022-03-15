@@ -188,13 +188,11 @@ class Robot():
 
             # check against other wall intersections
             dist = closestPoint.dist(self.pos)
-            print(dist, closestPoint, intersection)
             if (shortestDist == -1 or dist < shortestDist):
                 # this is the closest intersection found
                 shortestDist = dist
                 shortestPoint = closestPoint
                 shortestWall = intersection
-                print("^")
 
             # intersection is behind some other known wall
 
@@ -205,13 +203,12 @@ class Robot():
 
         # CASE 2: WALL FOUND IN PATH
         self.map.addSegment(shortestWall)
-        print(shortestPoint)
         return shortestPoint
 
 def MapFromPath():
     ## SETUP
     # create a world (walls). Pick from any world you want in the worlds.py file
-    walls = worlds.door
+    walls = worlds.triangles
 
     minPt = [0, 0]
     maxPt = [10, 15]
@@ -261,8 +258,6 @@ def MapFromPath():
         # input("Step")
         print("--",stepCounter,"--")
         stepCounter += 1
-        if (stepCounter >= 56):
-            input("Step")
 
 
 def main():

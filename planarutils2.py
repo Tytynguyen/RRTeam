@@ -268,12 +268,10 @@ def WhereSegmentOnPath(s, centerline, backawaydist = 0):
     if   (dx == 0):
         # centerline is vertical, perp line is along horizontal
         intpos = Point(centerline.pt1.x, spt.y)
-        print(intpos)
         intpos -= Point(0, backawaydist)
     elif (dy == 0):
         # centerline is horizontal, perp line is along vertical
         intpos = Point(spt.x, centerline.pt1.y)
-        print(intpos)
         # back off a bit
         intpos -= Point(backawaydist, 0)
 
@@ -292,9 +290,6 @@ def WhereSegmentOnPath(s, centerline, backawaydist = 0):
 
         # return to global coordinate system
         intpos = centerline.pt1 + Point(xrel, yrel)
-        print(centerline)
-        print(intpos, dx, dy, 1 / np.sqrt(dx*dx + dy*dy))
-        print(Point(dx, dy).scale(1 / np.sqrt(dx*dx + dy*dy) * backawaydist))
 
         # intersection position is known... now back off a bit
         # but don't move further back than centerline.pt1
