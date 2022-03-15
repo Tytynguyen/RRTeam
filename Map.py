@@ -56,7 +56,7 @@ class Map():
     '''
     def addSegment(self, s):
         # self.segments.append(s)
-        # TODO: do some checking here to see if we can elide our segment with another
+        # do some checking here to see if we can elide our segment with another
         # i.e. check if this segment is "near" any other segments
         # for each nearby segment, check colinearity
         # if within a specific threshold, combine the segments
@@ -193,7 +193,7 @@ class Robot():
 
         ## Move towards our point!
         # also handles collision checking and map updating
-        newPos = self.distSensor2(p2)
+        newPos = self.distSensor(p2)
         self.distanceTraveled += self.pos.dist(newPos)
         self.pos = newPos
 
@@ -225,7 +225,7 @@ class Robot():
     RETURNS:
     final position of robot after travel (stopping in front of walls)
     '''
-    def distSensor2(self, p2):
+    def distSensor(self, p2):
         # create segment between current position and p2
         path = Segment(self.pos, p2)
         pathDist = path.getLength()
