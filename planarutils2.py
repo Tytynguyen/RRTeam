@@ -292,6 +292,9 @@ def WhereSegmentOnPath(s, centerline, backawaydist = 0):
 
         # return to global coordinate system
         intpos = centerline.pt1 + Point(xrel, yrel)
+        print(centerline)
+        print(intpos, dx, dy, 1 / np.sqrt(dx*dx + dy*dy))
+        print(Point(dx, dy).scale(1 / np.sqrt(dx*dx + dy*dy) * backawaydist))
 
         # intersection position is known... now back off a bit
         # but don't move further back than centerline.pt1

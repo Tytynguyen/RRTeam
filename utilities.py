@@ -233,7 +233,7 @@ class Segment:
     def xdif(self):
         return self.pt2.x - self.pt1.x
     def ydif(self):
-        return self.pt2.y - self.pt1.x
+        return self.pt2.y - self.pt1.y
 
     '''
     Return a copy of the segment scaled to the given length,
