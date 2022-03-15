@@ -43,6 +43,9 @@ class RRTNode:
     def __eq__(self, other):
         return self.point == other.point
 
+    def __repr__(self):
+        return "(" + str(self.point) + ")"
+
 class RRTStar:
 
     def __init__(self, robotPt, goalPt, robot, map, minPt, maxPt):
@@ -96,9 +99,9 @@ class RRTStar:
             # Determine the target point.
             # Try directly towards the goal by deadreckoning some times, but otherwise
             # Choose a uniformly random target
-            if random.uniform(0.0, 1.0) <= deadreckoning:
+            if random.uniform(0.0, 1.0) < deadreckoning:
                 # Pick goal as target
-                targetpoint = robotpoint
+                targetpoint = self.robot.pos
             else:
                 # Uniformly pick target
                 x = random.uniform(xmin, xmax)
@@ -117,7 +120,7 @@ class RRTStar:
                 robotnode = RRTNode(robotpoint, [], nearnode)
                 self.tree.append(robotnode)
 
-                if nearnode.children == []:
+                if len(nearnode.children) == 0:
                     nearnode.children = [robotnode]
                 else:
                     nearnode.children.append(robotnode)
@@ -135,7 +138,7 @@ class RRTStar:
             if mapobj.localPlanner(nearpoint, nextpoint):
                 self.tree.append(nextnode)
 
-                if nearnode.children == []:
+                if len(nearnode.children) == 0:
                     nearnode.children = [nextnode]
                 else:
                     nearnode.children.append(nextnode)
@@ -147,7 +150,7 @@ class RRTStar:
                     robotnode = RRTNode(robotpoint, [], nextnode)
                     self.tree.append(robotnode)
 
-                    if nextnode.children == []:
+                    if len(nextnode.children) == 0:
                         nextnode.children = [robotnode]
                     else:
                         nextnode.children.append(robotnode)
