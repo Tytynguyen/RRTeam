@@ -10,10 +10,10 @@ import worlds as worlds
 import random
 
 ## GLOBAL CONSTANTS
-SENSOR_RANGE = 0.1 # in (x, y) units :O
+SENSOR_RANGE = 0.1 # km
 
 ROBOT_WIDTH = 0.1
-CUSHION = 1.5
+CUSHION = 1
 ELIDE_JUMP = 0.05
 ## END GLOBAL CONSTANTS
 
@@ -163,6 +163,7 @@ class Robot():
         self.map = map
         self.pos = pinit
         self.theta = tinit
+        self.distanceTraveled = 0
 
     ''' goto()
     Robot will turn and move towards a point until it encounters an obstacle.
@@ -185,7 +186,10 @@ class Robot():
 
         ## Move towards our point!
         # also handles collision checking and map updating
-        self.pos = self.distSensor2(p2)
+        newPos = self.distSensor2(p2)
+        self.distanceTraveled += self.pos.dist(newPos)
+        self.pos = newPos
+
         if (self.pos == p2):
             return True
         else:
@@ -217,9 +221,12 @@ class Robot():
     def distSensor2(self, p2):
         # create segment between current position and p2
         path = Segment(self.pos, p2)
+        pathDist = path.getLength()
+        # Extended path for sensor reading when wall just past endpoint
+        extPath = path.rescale(pathDist + SENSOR_RANGE)
 
         # loop through all walls to find ones that intersect the path
-        rectEdges = RectangleFromCenterline(path, ROBOT_WIDTH / 2)
+        rectEdges = RectangleFromCenterline(extPath, ROBOT_WIDTH / 2)
 
         # loop variables to store best outcome
         shortestDist = -1
@@ -249,15 +256,20 @@ class Robot():
             # 1. robot final position (closest position to wall along centerline)
             # 2. revised segment based on sensor range at final position (TODO)
             # need to compare with other final positions
-            closestPoint = WhereSegmentOnPath(intersection, path, CUSHION)
+            closestPoint = WhereSegmentOnPath(intersection, extPath, CUSHION)
 
             # check against other wall intersections
             dist = closestPoint.dist(self.pos)
             if (shortestDist == -1 or dist < shortestDist):
                 # this is the closest intersection found
-                shortestDist = dist
-                shortestPoint = closestPoint
                 shortestWall = intersection
+                # Double check if the wall is past the endpoint
+                if (dist > pathDist):
+                    shortestDist = dist
+                    shortestPoint = p2
+                else:
+                    shortestDist = dist
+                    shortestPoint = closestPoint
 
             # intersection is behind some other known wall
 
@@ -325,6 +337,7 @@ def MapFromPath():
             print("*",stepCounter,"Steps")
             print("*",len(robotmap.segments), "Segments")
             print("*", robotmap.elideCounter, "Segments Elided")
+            print("*", robot.distanceTraveled, "km Travelled")
             input("")
             break
         # input("Step")
@@ -334,7 +347,7 @@ def MapFromPath():
 
 
 def main():
-    random.seed(0)
+    # random.seed(0)
     #TestVisualization()
 
     MapFromPath()

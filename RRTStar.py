@@ -73,8 +73,8 @@ class RRTStar:
             self.newpath = False
             # print(len(self.tree))
 
-            # # post process
-            # self.PostProcess(self.tree)
+            # post process
+            self.PostProcess()
 
             return robotNode
         else:
@@ -273,3 +273,31 @@ class RRTStar:
             self.getAllChildren(child, nodelist)
 
         return nodelist
+
+
+    '''
+    Post process the tree by:
+    1. remove all unnecessary intermediate nodes
+    2. add nodes and rerun A* (TODO)
+    '''
+    def PostProcess(self):
+        # SKIP NODES
+        currentNode = self.robotNode
+        while True:
+            # start from robotnode--check if it connects to its parents parents
+            parent = currentNode.parent
+            if (parent is None):
+                break
+            grandparent = parent.parent
+            if (grandparent is None):
+                break
+            if (self.map.localPlanner(currentNode.point, grandparent.point)):
+                # self.tree.remove(parent)
+                currentNode.parent = grandparent
+                grandparent.children.append(currentNode)
+                parent.children.remove(currentNode)
+                self.killNode(parent)
+                # don't update currentNode
+                currentNode = grandparent
+            else:
+                currentNode = parent

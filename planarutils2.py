@@ -263,7 +263,7 @@ def SegmentCrossRectangle(s, rectEdges):
 '''
 Returns position along centerline where perpendicular line intersects segment s
 '''
-def WhereSegmentOnPath(s, centerline, backawaydist = 0):
+def WhereSegmentOnPath2(s, centerline, backawaydist = 0):
     # strategy: generate a line perpendicular to centerline that intersects
     # closest s endpoint. Find where that line intersects centerline.
 
@@ -315,7 +315,61 @@ def WhereSegmentOnPath(s, centerline, backawaydist = 0):
         intpos = centerline.pt1
     return intpos
 
+'''
+Returns position along centerline where perpendicular line intersects segment s
+'''
+def WhereSegmentOnPath(s, centerline, backawaydist = 0):
+    # strategy: generate a line perpendicular to centerline that intersects
+    # closest s endpoint. Find where that line intersects centerline.
 
+    intpos1 = None
+    for spt in (s.pt1, s.pt2):
+        # get perpendicular slope
+        dx = centerline.xdif()
+        dy = centerline.ydif()
+        ## EDGE CASES
+        if   (dx == 0):
+            # centerline is vertical, perp line is along horizontal
+            intpos = Point(centerline.pt1.x, spt.y)
+            intpos -= Point(0, backawaydist)
+        elif (dy == 0):
+            # centerline is horizontal, perp line is along vertical
+            intpos = Point(spt.x, centerline.pt1.y)
+            # back off a bit
+            intpos -= Point(backawaydist, 0)
+
+        ## NORMAL CASE
+        else:
+            # perp line is not so simple..
+            # get perp slope
+            m = dy/dx
+            mperp = -dx/dy
+
+            # relative to (0, 0) at centerline.pt1:
+            # x = (y1 - mperp*x1) / (m - mperp)
+            srel = spt - centerline.pt1
+            xrel = (srel.y - mperp*srel.x) / (m - mperp)
+            yrel = m*xrel
+
+            # return to global coordinate system
+            intpos = centerline.pt1 + Point(xrel, yrel)
+
+            # intersection position is known... now back off a bit
+            # but don't move further back than centerline.pt1
+            intpos -= Point(dx, dy).scale(1 / np.sqrt(dx*dx + dy*dy) * backawaydist)
+
+        # check how far back we just moved
+        if (intpos.dist(centerline.pt2) > centerline.getLength()):
+            # We moved too far!!
+            intpos = centerline.pt1
+
+        if (intpos1 == None):
+            intpos1 = intpos
+
+    if (intpos.dist(centerline.pt1) > intpos1.dist(centerline.pt1)):
+        return intpos1
+    else:
+        return intpos
 
 ## CHECKING FUNCTIONS
 def CheckWhereSegmentCrossSegment():
