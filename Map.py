@@ -261,8 +261,6 @@ def MapFromPath():
         # input("Step")
         print("--",stepCounter,"--")
         stepCounter += 1
-        if (stepCounter >= 22):
-            input("Step")
 
 
 def main():
