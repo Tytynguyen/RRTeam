@@ -127,16 +127,16 @@ class Map():
 
     def localPlanner(self, pt1, pt2):
         moveSegment = Segment(pt1, pt2)
-        rectEdges = RectangleFromCenterline(moveSegment, ROBOT_WIDTH / 2)
+        # rectEdges = RectangleFromCenterline(moveSegment, ROBOT_WIDTH / 2)
 
         for segment in self.segments:
             # If plan crosses a wall -> FAIL
-            # if SegmentCrossSegment(moveSegment.seg, segment.seg):
-            #     return False
-
-            intersection = SegmentCrossRectangle(segment, rectEdges)
-            if (intersection is not None):
+            if SegmentCrossSegment(moveSegment.seg, segment.seg):
                 return False
+
+            # intersection = SegmentCrossRectangle(segment, rectEdges)
+            # if (intersection is not None):
+            #     return False
 
 
 
@@ -354,7 +354,7 @@ def MapFromPath():
 
 
 def main():
-    # random.seed(0)
+    random.seed(0)
     #TestVisualization()
 
     MapFromPath()
