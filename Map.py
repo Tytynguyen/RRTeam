@@ -130,8 +130,8 @@ class Map():
 
         for segment in self.segments:
             # If plan crosses a wall -> FAIL
-            if SegmentCrossSegment(moveSegment.seg, segment.seg):
-                return False
+            # if SegmentCrossSegment(moveSegment.seg, segment.seg):
+            #     return False
 
         return True
 

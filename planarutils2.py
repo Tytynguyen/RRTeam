@@ -186,7 +186,7 @@ Cases:
 3. Segment inside rectange -> return segment
 4. Segment outside rectangle -> return None
 
-Segment reference:
+Segment reference (pos oriented):
 A       D
 ---------
 B       C
