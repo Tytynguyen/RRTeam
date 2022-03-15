@@ -65,7 +65,7 @@ class RRTStar:
     # RETURN GOAL NODE
     def update(self):
         if self.newpath:
-            robotNode = self.RRT(self.robotPoint,Nmax,self.minPt[0],self.maxPt[0],self.minPt[1],self.maxPt[1],self.map)
+            robotNode = self.RRT(self.robot.pos,Nmax,self.minPt[0],self.maxPt[0],self.minPt[1],self.maxPt[1],self.map)
 
             # If too many nodes, we fail
             if robotNode is None:
@@ -247,10 +247,8 @@ class RRTStar:
         return list
 
     def killNode(self, node):
-        # Kill all of the node's kids!
-
-        for child in node.children:
-            self.killNode(child)
+        # Get a list of all children of children of children of...
+        childrenlist = self.getAllChildren(node, [])
 
         # Kill node by removing it from the children list of its parent
         parent = node.parent
@@ -258,14 +256,17 @@ class RRTStar:
 
         # Also remove node from tree list:
         self.tree.remove(node)
+        # Also remove all childrens from tree list:
+        for child in childrenlist:
+            self.tree.remove(child)
 
 
-    # def getAllChildren(self, node, nodelist = []):
-    #     """
-    #     Get all nodes that are children, grandchildren, etc. of a specific node
-    #     """
-    #     nodelist.append(node.children)
-    #     for child in node.children:
-    #         self.getAllChildren(child, nodelist)
-    #
-    #     return nodelist
+    def getAllChildren(self, node, nodelist):
+        """
+        Get all nodes that are children, grandchildren, etc. of a specific node
+        """
+        for child in node.children:
+            nodelist.append(child)
+            self.getAllChildren(child, nodelist)
+
+        return nodelist
