@@ -63,6 +63,15 @@ maze =      World(smallWorldMinPt, smallWorldMaxPt,
                    (Point(0,   9), Point(7,  9)),
                    (Point(10, 12), Point(3, 12))))
 
+toughmaze = World(smallWorldMinPt, smallWorldMaxPt, 
+                  bottomLeftStartPt, topRightGoalPt,
+                  ((Point( 3,  3), Point(7,  3)),
+                   (Point(10,  6), Point(5,  6)),
+                   (Point( 0,  9), Point(7,  9)),
+                   (Point(10, 12), Point(3, 12)),
+                   (Point( 0,  5), Point(3,  5)),
+                   (Point( 3,  3), Point(3, 10))))
+
 bigWorldMinPt = Point(0,   0  )
 bigWorldMaxPt = Point(100, 150)
 bigStartPt = Point(1, 1)

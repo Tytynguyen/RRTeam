@@ -294,7 +294,7 @@ class Robot():
 def MapFromPath():
     ## SETUP
     # create a world (walls). Pick from any world you want in the worlds.py file
-    world = worlds.maze
+    world = worlds.toughmaze
     
     walls = world.walls
     minPt = world.minPt
