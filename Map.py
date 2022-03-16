@@ -171,6 +171,7 @@ class Robot():
         self.pos = pinit
         self.theta = tinit
         self.distanceTraveled = 0
+        self.traveled = [] # store segments of route traveled
 
     ''' goto()
     Robot will turn and move towards a point until it encounters an obstacle.
@@ -195,6 +196,7 @@ class Robot():
         # also handles collision checking and map updating
         newPos = self.distSensor(p2)
         self.distanceTraveled += self.pos.dist(newPos)
+        self.traveled.append(Segment(self.pos, newPos))
         self.pos = newPos
 
         if (self.pos == p2):
@@ -338,6 +340,11 @@ def MapFromPath():
         visual.ShowFigure()
 
         if (robot.pos == goalPt):
+            visual.ClearFigure()
+            visual.ShowSegments(robot.traveled)
+            visual.ShowBot(robot)
+            visual.ShowFigure()
+            
             # TODO: add some statistics about path
             print("")
             print("DESTINATION REACHED")
