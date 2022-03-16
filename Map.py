@@ -142,6 +142,13 @@ class Map():
 
         return True
 
+    def pointInWall(self, pt):
+        for segment in self.segments:
+            # If point crosses a wall -> FAIL
+            if segment.getLength() - (segment.pt1.dist(pt) + segment.pt2.dist(pt)) <0.01:
+                return True
+
+        return False
 
 
 '''
@@ -316,10 +323,12 @@ def MapFromPath():
 
     # create viz
     visual = Visualization(walls, startPt, goalPt, minPt, maxPt)
+    showFish = True
 
     visual.ShowWorld()
     visual.ShowBot(robot)
     visual.ShowGoal(goalPt)
+    visual.ShowBaby(world.startPt)
     visual.ShowFigure()
     input("Initial world created. (hit return to continue)")
 
@@ -338,14 +347,22 @@ def MapFromPath():
             input("Planning failed, try changing dstep or Nmax")
             break
         visual.ShowBot(robot)
-        visual.ShowGoal(goalPt)
+        if showFish:
+            visual.ShowGoal(goalPt)
+        else:
+            visual.ShowGoal(robot.pos)
+        visual.ShowBaby(world.startPt)
         visual.ShowFigure()
 
         if (robot.pos == goalPt):
             visual.ClearFigure()
             visual.ShowRRTSegments(robot.traveled)
             visual.ShowBot(robot)
-            visual.ShowGoal(goalPt)
+            visual.ShowBaby(world.startPt)
+            if showFish:
+                visual.ShowGoal(goalPt)
+            else:
+                visual.ShowGoal(robot.pos)
             visual.ShowFigure()
             
             # TODO: add some statistics about path
@@ -357,7 +374,16 @@ def MapFromPath():
             print("*", robotmap.elideCounter, "Segments Elided")
             print("*", robot.distanceTraveled, "km Travelled")
             input("")
-            break
+
+            # define starting postion
+            holdpt = startPt
+            startPt = goalPt
+            # define goal position
+            goalPt = holdpt
+
+            showFish = not showFish
+            planner = RRTStar(startPt, goalPt, robot, robotmap, minPt, maxPt)
+
         # input("Step")
         print("--",stepCounter,"--")
         print("Map segments:", len(robotmap.segments))
@@ -366,7 +392,6 @@ def MapFromPath():
 
 def main():
     random.seed(90)
-
     MapFromPath()
 
 if __name__== "__main__":

@@ -140,7 +140,12 @@ class Visualization():
 
     def ShowGoal(self, point):
         imageData = img.imread('fish.png')
-        plt.imshow(imageData, extent=[point.x - 0.5, point.x + 0.5, point.y - 0.5, point.y + 0.5])
+        plt.imshow(imageData, extent=[point.x - 0.3, point.x + 0.3, point.y - 0.3, point.y + 0.3])
+
+    def ShowBaby(self, point):
+        imageData = img.imread('babypenguin.png')
+        plt.imshow(imageData, extent=[point.x - 0.35, point.x + 0.35, point.y - 0.35, point.y + 0.35])
+
 
     '''
     Shows the plot

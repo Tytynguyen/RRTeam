@@ -81,7 +81,7 @@ class RRTStar:
             return robotNode
         else:
             # print(self.robot.pos)
-            return self.TStar(self.robot)
+            return self.TStar(self.robot, self.map)
 
     def RRT(self, robotpoint, Nmax, xmin, xmax, ymin, ymax, mapobj):
         """
@@ -171,7 +171,7 @@ class RRTStar:
                 return None
 
 
-    def TStar(self, robot):
+    def TStar(self, robot, mapobj):
         """
         Run TStar given a start node and end node, using RRT to generate a tree.
         """
@@ -182,11 +182,16 @@ class RRTStar:
         curnode = path[1]
 
         # Fails to make it
+        oldpos = robot.pos
         if not robot.goto(curnode.point):
             p = robot.pos
 
             # Kill previous node, no longer can get there
             self.killNode(path[0])
+
+            # Also check the next node to make sure it works if needed
+            if p == oldpos and curnode != path[-1] and mapobj.pointInWall(curnode.point):
+                self.killNode(curnode)
 
             # Make new RRT
             self.robotNode = RRTNode(p, [])
@@ -259,13 +264,15 @@ class RRTStar:
 
         # Kill node by removing it from the children list of its parent
         parent = node.parent
-        parent.children.remove(node)
+        if parent is not None and parent.children is not None:
+            parent.children.remove(node)
 
         # Also remove node from tree list:
         self.tree.remove(node)
         # Also remove all childrens from tree list:
-        for child in childrenlist:
-            self.tree.remove(child)
+        if childrenlist is not None:
+            for child in childrenlist:
+                self.tree.remove(child)
 
 
     def getAllChildren(self, node, nodelist):

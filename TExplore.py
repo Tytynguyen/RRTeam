@@ -16,7 +16,7 @@
 from Map import *
 from RRTStar import *
 import numpy as np
-from planarutils import *
+from planarutils2 import *
 from utilities import *
 import worlds as worlds
 
@@ -113,7 +113,7 @@ class MoveNode:
 def main():
     ## SETUP
     # create a world (walls)
-    walls = worlds.triangles
+    walls = worlds.door
 
     minPt = [0, 0]
     maxPt = [10, 15]
