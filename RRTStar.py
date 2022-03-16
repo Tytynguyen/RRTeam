@@ -26,7 +26,7 @@ import numpy as np
 # from planarutils2 import *
 from utilities import *
 
-dstep = 10
+dstep = 1
 deadreckoning = 0.05
 Nmax = 1000
 
@@ -76,7 +76,7 @@ class RRTStar:
             # print(len(self.tree))
 
             # post process
-            self.PostProcess()
+            #self.PostProcess()
 
             return robotNode
         else:

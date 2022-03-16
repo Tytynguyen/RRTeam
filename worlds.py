@@ -66,3 +66,15 @@ exit =      World(bigWorldMinPt, bigWorldMaxPt,
                   ((Point(0,    2), Point(50,  2)),
                    (Point(55,   0), Point(55,  5)),
                    (Point(50,   2), Point(50,  7))))
+
+# find your way out of a small hallway
+maze =      World(bigWorldMinPt, bigWorldMaxPt, 
+                  bigStartPt, bigGoalPt,
+                  ((Point(10,   0), Point(10, 50)),
+                   (Point(0,   60), Point(15, 60)),
+                   (Point(15,  60), Point(20, 55)),
+                   (Point(20,  55), Point(20, 30)),
+                   (Point(30,   0), Point(30, 70)),
+                   (Point(30,  70), Point(10, 70)),
+                   (Point(70,  20), Point(70, 150)),
+                   ))
