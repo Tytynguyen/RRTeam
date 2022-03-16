@@ -292,15 +292,16 @@ class Robot():
 def MapFromPath():
     ## SETUP
     # create a world (walls). Pick from any world you want in the worlds.py file
-    walls = worlds.door
-
-    minPt = Point(0,  0 )
-    maxPt = Point(10, 15)
+    world = worlds.door
+    
+    walls = world.walls
+    minPt = world.minPt
+    maxPt = world.maxPt
 
     # define starting postion
-    startPt = Point(1, 1)
+    startPt = world.startPt
     # define goal position
-    goalPt = Point(9, 14)
+    goalPt = world.goalPt
 
     # create a map
     robotmap = Map(minPt, maxPt)
