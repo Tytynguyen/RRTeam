@@ -26,7 +26,7 @@ import numpy as np
 # from planarutils2 import *
 from utilities import *
 
-dstep = 10
+dstep = 1
 deadreckoning = 0.05
 Nmax = 1000
 
@@ -132,7 +132,6 @@ class RRTStar:
                 self.robotNode = robotnode
                 return robotnode
 
-            # Determine the next point, a step size (dstep) away.
             t = np.arctan2((targetpoint.y - nearpoint.y), (targetpoint.x - nearpoint.x))
             nx = dstep*np.cos(t) + nearpoint.x
             ny = dstep*np.sin(t) + nearpoint.y
