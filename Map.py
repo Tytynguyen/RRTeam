@@ -319,6 +319,7 @@ def MapFromPath():
 
     visual.ShowWorld()
     visual.ShowBot(robot)
+    visual.ShowGoal(goalPt)
     visual.ShowFigure()
     input("Initial world created. (hit return to continue)")
 
@@ -337,12 +338,14 @@ def MapFromPath():
             input("Planning failed, try changing dstep or Nmax")
             break
         visual.ShowBot(robot)
+        visual.ShowGoal(goalPt)
         visual.ShowFigure()
 
         if (robot.pos == goalPt):
             visual.ClearFigure()
             visual.ShowRRTSegments(robot.traveled)
             visual.ShowBot(robot)
+            visual.ShowGoal(goalPt)
             visual.ShowFigure()
             
             # TODO: add some statistics about path

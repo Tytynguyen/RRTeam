@@ -138,6 +138,10 @@ class Visualization():
             # Points associated with RRT nodes are cyan
             self.ShowPoint(node.point, 'co')
 
+    def ShowGoal(self, point):
+        imageData = img.imread('cheese.png')
+        plt.imshow(imageData, extent=[point.x - 0.5, point.x + 0.5, point.y - 0.5, point.y + 0.5])
+
     '''
     Shows the plot
     '''
