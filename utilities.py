@@ -15,6 +15,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.image as img
 
 '''
 Aggregates visualization of each aspect of the space (mapping segments, points,
@@ -102,9 +103,10 @@ class Visualization():
     RETURNS: None
     '''
     def ShowBot(self, robot):
-        plt.plot(robot.pos.x, robot.pos.y, marker=(3, 0, 180 / np.pi * robot.theta+90), 
-                 markersize=1500 / self.max.x / self.max.y) # inverse scale with size of space
-
+        #plt.plot(robot.pos.x, robot.pos.y, marker=(3, 0, 180 / np.pi * robot.theta+90),
+                # markersize=1500 / self.max.x / self.max.y) # inverse scale with size of space
+        imageData = img.imread('mouse.png')
+        plt.imshow(imageData, extent=[robot.pos.x-0.5, robot.pos.x+0.5, robot.pos.y-0.5, robot.pos.y+0.5])
     '''
     Takes a point and displays it
     ARGS: point - Point object to display
