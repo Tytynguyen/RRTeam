@@ -102,7 +102,8 @@ class Visualization():
     RETURNS: None
     '''
     def ShowBot(self, robot):
-        plt.plot(robot.pos.x, robot.pos.y, marker=(3, 0, 180 / np.pi * robot.theta+90), markersize=10)
+        plt.plot(robot.pos.x, robot.pos.y, marker=(3, 0, 180 / np.pi * robot.theta+90), 
+                 markersize=1500 / self.max.x / self.max.y) # inverse scale with size of space
 
     '''
     Takes a point and displays it
@@ -111,7 +112,7 @@ class Visualization():
     RETURNS: None
     '''
     def ShowPoint(self, point, disp):
-        plt.plot(point.x, point.y, disp, markersize=5)
+        plt.plot(point.x, point.y, disp, markersize=750 / self.max.x / self.max.y)
 
 
     '''

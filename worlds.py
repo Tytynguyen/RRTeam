@@ -54,3 +54,15 @@ door =      World(smallWorldMinPt, smallWorldMaxPt,
                    (Point(0,  15), Point(10,15)),
                    (Point(10, 15), Point(10, 0)),
                    (Point(10,  0), Point( 0, 0))))
+
+bigWorldMinPt = Point(0,   0  )
+bigWorldMaxPt = Point(100, 150)
+bigStartPt = Point(1, 1)
+bigGoalPt = Point(90, 140)
+
+# find your way out of a small hallway
+exit =      World(bigWorldMinPt, bigWorldMaxPt, 
+                  bigStartPt, bigGoalPt,
+                  ((Point(0,    2), Point(50,  2)),
+                   (Point(55,   0), Point(55,  5)),
+                   (Point(50,   2), Point(50,  7))))

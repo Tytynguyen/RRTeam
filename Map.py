@@ -294,7 +294,7 @@ class Robot():
 def MapFromPath():
     ## SETUP
     # create a world (walls). Pick from any world you want in the worlds.py file
-    world = worlds.door
+    world = worlds.exit
     
     walls = world.walls
     minPt = world.minPt
@@ -341,7 +341,7 @@ def MapFromPath():
 
         if (robot.pos == goalPt):
             visual.ClearFigure()
-            visual.ShowSegments(robot.traveled)
+            visual.ShowRRTSegments(robot.traveled)
             visual.ShowBot(robot)
             visual.ShowFigure()
             
@@ -362,7 +362,7 @@ def MapFromPath():
 
 
 def main():
-    random.seed(0)
+    random.seed(90)
 
     MapFromPath()
 
