@@ -72,6 +72,43 @@ toughmaze = World(smallWorldMinPt, smallWorldMaxPt,
                    (Point( 0,  5), Point(3,  5)),
                    (Point( 3,  3), Point(3, 10))))
 
+slantmaze  = World(smallWorldMinPt, smallWorldMaxPt, 
+                  bottomLeftStartPt, topRightGoalPt,
+                  ((Point(0,   2), Point(7,  3)),
+                   (Point(10,  5), Point(3,  6)),
+                   (Point(0,   8), Point(7,  9)),
+                   (Point(10, 11), Point(3, 12))))
+
+hexagon    = World(smallWorldMinPt, smallWorldMaxPt, 
+                  bottomLeftStartPt, topRightGoalPt,
+                  ((Point(2.5, 5.5), Point(  3,   4)),
+                   (Point(  3,   4), Point(  5,   4)),
+                   (Point(  5,   4), Point(5.5, 5.5)),
+                   (Point(5.5, 5.5), Point(  5,   7)),
+                   (Point(  5,   7), Point(  3,   7)),
+                   (Point(2.5, 5.5), Point(  3,   7))))
+
+horWorldMinPt = Point(0,  0)
+horWorldMaxPt = Point(15, 10)
+horBottomLeftStartPt = Point(1, 1)
+horTopRightGoalPt = Point(14, 9)
+
+slantmazehor = World(horWorldMinPt, horWorldMaxPt, 
+                  horBottomLeftStartPt, horTopRightGoalPt,
+                  ((Point(2,   0), Point(3,  7)),
+                   (Point(5,  10), Point(6,  3)),
+                   (Point(8,   0), Point(9,  7)),
+                   (Point(11, 10), Point(12, 3))))
+
+hexagonhor  = World(horWorldMinPt, horWorldMaxPt, 
+                  horBottomLeftStartPt, horTopRightGoalPt,
+                  ((Point(5.5, 2.5), Point(  4,   3)),
+                   (Point(  4,   3), Point(  4,   5)),
+                   (Point(  4,   5), Point(5.5, 5.5)),
+                   (Point(5.5, 5.5), Point(  7,   5)),
+                   (Point(  7,   5), Point(  7,   3)),
+                   (Point(5.5, 2.5), Point(  7,   3))))
+
 bigWorldMinPt = Point(0,   0  )
 bigWorldMaxPt = Point(100, 150)
 bigStartPt = Point(1, 1)
