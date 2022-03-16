@@ -26,7 +26,7 @@ import numpy as np
 # from planarutils2 import *
 from utilities import *
 
-dstep = 1
+dstep = 10
 deadreckoning = 0.05
 Nmax = 1000
 
@@ -76,7 +76,7 @@ class RRTStar:
             # print(len(self.tree))
 
             # post process
-            #self.PostProcess()
+            self.PostProcess()
 
             return robotNode
         else:
@@ -138,6 +138,9 @@ class RRTStar:
             ny = dstep*np.sin(t) + nearpoint.y
             nextpoint = Point(nx, ny)
             nextnode = RRTNode(nextpoint, [], nearnode)
+
+            if not xmin<nextpoint.x<xmax and ymin<nextpoint.y<ymax:
+                continue
 
             # Check whether nearpoint connects to next generated point
             if mapobj.localPlanner(nearpoint, nextpoint):
